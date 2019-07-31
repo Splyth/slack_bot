@@ -3,9 +3,9 @@ A repo where I stash info about how to make a slack bot using aws
 
 The lambda_function.py uses the Python 3.6 Runtime
 
-BOT_USER is the slack apps token: 
+BOT_USER is the slack apps token:
 
-The majority of this code was copied from from: 
+The majority of this code was copied from from:
 https://chatbotslife.com/write-a-serverless-slack-chat-bot-using-aws-e2d2432c380e
 he also provides a direct link to a more full version than in his tutorial:
 https://gist.github.com/zedr/226fab1c28f3bec8d656f6b54cea742f
@@ -23,13 +23,12 @@ AWS has a way to test this via the Test button next to save. You can click on th
 to it and use the following JSON
 ```
 {
-  "body": {
-    "type": "direct_mention",
-    "channel": "THE CHANNEL YOU WANT TO POST TO",
-    "text": "testing talking from a serverless lambda function"
-  }
+{
+  "body": "{\"token\":\"TEST_TOKEN\",\"team_id\":\"TEAM_ID\",\"api_app_id\":\"APP_ID\",\"event\":{\"client_msg_id\":\"MSG_ID\",\"type\":\"app_mention\",\"text\":\"<@APP_ID> reverse me I am a palindrome tacocat\",\"user\":\"USER_WHO_SENT_MESSAGE\",\"team\":\"TEAM_ID\",\"channel\":\"CHANNEL_ID\"},\"type\":\"event_callback\",\"event_id\":\"EVENT_ID\"}"
+}
 }
 ```
+
 Easiest way to find a channel: 
 Open up your slack workspace in your favorite browser. Now navigate to the
 channel you want to post in. Check your URL. Notice that last string of letters and numbers in the URL changes as you click
