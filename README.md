@@ -3,19 +3,27 @@ A repo where I stash info about how to make a slack bot using aws
 
 ## Requirements
   (AWS Account)[https://aws.amazon.com/console/]
+  
   Python 3.6 Runtime (Select once you have your lamabda function environment and API Gateway created)
+  
   (Google API Account)[https://console.developers.google.com]
+  
   Google Custom Search API Enabled: Once your Google API Account is made enable "Custom Search API" for your project
+  
   SLACK App API Access
   
 ## Invoke
   Once running the bot knows the following commands
+  
   @BOT_NAME reverse me - reverse text enetered after command
+  
   @BOT_NAME image me - use text after command to query Google for an image
   
 ## Environment Variables
   BOT_TOKEN is the slack apps token (more info is (here:)[https://api.slack.com/bot-users]
+  
   GOOGLE API KEY: You can generate one in the Google API Under Credentials
+  
   GOOGLE_CUSTOM_SEARCH_KEY: Once you've enabled you Custom Search API check there it's the: Search Engine ID
 
 ## Notes on Google API
