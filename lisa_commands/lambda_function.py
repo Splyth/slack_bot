@@ -26,7 +26,6 @@ def lambda_handler(data, context):
         'channel': channel_id,
         'text': text
     }
-    
-    logging.warn(data)
+
     request.submit_slack_request(json.dumps(data).encode('utf-8'))
     return request.return_status()
