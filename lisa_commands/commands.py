@@ -54,3 +54,5 @@ def run_command(command, query):
         logging.warn(query)
         reverse = query[::-1]
         return reverse
+        
+    return "I'm not able to figure out what to do. Tell Lord Fire Turkey he's a slacker and needs to implement that command"
