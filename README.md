@@ -58,7 +58,7 @@ A repo where I stash info about how to make a slack bot using aws
   ```
 
 ## Misc Notes
-  ###Easiest way to find a channel: 
+  ### Easiest way to find a channel: 
   Open up your slack workspace in your favorite browser. Now navigate to the
   channel you want to post in. Check your URL. Notice that last string of letters and numbers in the URL changes as you click
   around. Those numbers the channel ID
