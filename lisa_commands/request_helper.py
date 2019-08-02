@@ -2,11 +2,15 @@ import json
 import logging
 import os
 import urllib
-
+import random
 # from googlesearch import search_images Need to figure out how to install this
 
 # Grab the Bot OAuth token from the environment.
 BOT_TOKEN = os.environ["BOT_TOKEN"]
+
+# GOOGLE API KEY info can be found here: https://developers.google.com/custom-search/
+GOOGLE_API_KEY = os.environ['GOOGLE_API_KEY']
+GOOGLE_CUSTOM_SEARCH_KEY = os.environ['GOOGLE_CUSTOM_SEARCH_KEY']
 
 # Define the URL of the targeted Slack API resource.
 # We'll send our replies there.
@@ -33,9 +37,15 @@ def submit_google_image_search_request(query):
     Submit a search to google for images
     :query what to query for
     """
-    logging.warn('arrived here')
-    # for j in search_images(query, tld='com', lang='en', safe='on', num=10, start=0, stop=10, pause=2.0, only_standard=True): 
-    #     print(j) 
+    params = urllib.parse.urlencode({
+        'q': query, 
+        'key': GOOGLE_API_KEY, 
+        'cx': GOOGLE_CUSTOM_SEARCH_KEY,
+        'num': 10
+    })
+    data = json.loads(urllib.request.urlopen("https://www.googleapis.com/customsearch/v1?" + params).read())
+    return random.choice(data["items"])["pagemap"]["cse_image"][0]['src']
+
 def return_status():
     """
     We always want to return status OK to the gateway API
