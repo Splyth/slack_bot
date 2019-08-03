@@ -38,13 +38,17 @@ def submit_google_image_search_request(query):
     :query what to query for
     """
     params = urllib.parse.urlencode({
-        'q': query, 
+        #  'q': query, 
+        'q': ';lkj;lkjp[ui0-98poui0-9809u[09u[09u[pouj[09u0poj',
         'key': GOOGLE_API_KEY, 
         'cx': GOOGLE_CUSTOM_SEARCH_KEY,
         'num': 10
     })
     data = json.loads(urllib.request.urlopen("https://www.googleapis.com/customsearch/v1?" + params).read())
-    return random.choice(data["items"])["pagemap"]["cse_image"][0]['src']
+    if 'items' in data:
+        return random.choice(data["items"])["pagemap"]["cse_image"][0]['src']
+    else:
+        return "Sorry! I didn't find any results."
 
 def return_status():
     """
