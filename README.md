@@ -1,6 +1,8 @@
 # slack_bot
 A repo where I stash info about how to make a slack bot using aws
 
+## NOTE
+  GOT BING WORKING! Code is ugly it's in request helper. I'll get it cleaned up later
 ## Requirements
   (AWS Account)[https://aws.amazon.com/console/]
   
