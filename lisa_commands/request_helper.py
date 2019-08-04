@@ -12,6 +12,11 @@ BOT_TOKEN = os.environ["BOT_TOKEN"]
 GOOGLE_API_KEY = os.environ['GOOGLE_API_KEY']
 GOOGLE_CUSTOM_SEARCH_KEY = os.environ['GOOGLE_CUSTOM_SEARCH_KEY']
 
+# The Microsoft Azure subscription key
+BING_SUBSCRIPTION_KEY = os.environ['BING_SUBSCRIPTION_KEY']
+# The Custom Search API (uses bing) in Mircorsoft Azure to use
+BING_CUSTOM_SEARCH_KEY = os.environ['BING_CUSTOM_SEARCH_KEY']
+
 # Define the URL of the targeted Slack API resource.
 # We'll send our replies there.
 SLACK_URL = "https://slack.com/api/chat.postMessage"
@@ -32,14 +37,13 @@ def submit_slack_request(data):
     # Fire off the request!
     urllib.request.urlopen(request, data).read()
 
-def submit_google_image_search_request(query):
+def google_image_search(query):
     """
     Submit a search to google for images
     :query what to query for
     """
     params = urllib.parse.urlencode({
-        #  'q': query, 
-        'q': ';lkj;lkjp[ui0-98poui0-9809u[09u[09u[pouj[09u0poj',
+        'q': query, 
         'key': GOOGLE_API_KEY, 
         'cx': GOOGLE_CUSTOM_SEARCH_KEY,
         'num': 10
@@ -47,6 +51,25 @@ def submit_google_image_search_request(query):
     data = json.loads(urllib.request.urlopen("https://www.googleapis.com/customsearch/v1?" + params).read())
     if 'items' in data:
         return random.choice(data["items"])["pagemap"]["cse_image"][0]['src']
+    else:
+        return "Sorry! I didn't find any results."
+
+def bing_image_search(query):
+    params = urllib.parse.urlencode({
+        'q': query, 
+        'count': 10,
+        'mkt': 'en-US',
+        'customconfig': BING_CUSTOM_SEARCH_KEY
+    })
+    
+    request = urllib.request.Request('https://api.cognitive.microsoft.com/bingcustomsearch/v7.0/images/search?' + params)
+    request.add_header("Ocp-Apim-Subscription-Key", BING_SUBSCRIPTION_KEY)
+
+    data = json.loads(urllib.request.urlopen(request).read())
+
+    logging.warn(data)
+    if 'value' in data and data['value']:
+        return random.choice(data["value"])["contentUrl"]
     else:
         return "Sorry! I didn't find any results."
 
