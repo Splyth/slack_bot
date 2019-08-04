@@ -1,4 +1,5 @@
 import logging
+import random
 import re
 import request_helper as request
 
@@ -48,11 +49,15 @@ def run_command(command, query):
     """
 
     if command.strip() == "image":
-        return request.submit_google_image_search_request(query.strip())
+        search_engine = random.choice(['google', 'bing'])
+        if search_engine == 'google':
+            return "From Googe: " + request.google_image_search(query.strip())
+        else:
+            return "From Bing: " + request.bing_image_search(query.strip())
         
     if command.strip() == 'reverse':
         logging.warn(query)
         reverse = query[::-1]
         return reverse
         
-    return "I'm not able to figure out what to do. Tell Lord Fire Turkey he's a slacker and needs to implement that command"
+    return "I don't know that command sorry"
