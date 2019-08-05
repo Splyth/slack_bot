@@ -1,8 +1,6 @@
 # slack_bot
 A repo where I stash info about how to make a slack bot using aws
 
-## NOTE
-  GOT BING WORKING! Code is ugly it's in request helper. I'll get it cleaned up later
 ## Requirements
   (AWS Account)[https://aws.amazon.com/console/]
   
@@ -27,6 +25,10 @@ A repo where I stash info about how to make a slack bot using aws
   GOOGLE API KEY: You can generate one in the Google API Under Credentials
   
   GOOGLE_CUSTOM_SEARCH_KEY: Once you've enabled you Custom Search API check there it's the: Search Engine ID
+
+  BING_SUBSCRIPTION_KEY: The Subscription Key from the Azure Account to use
+
+  BING_CUSTOM_SEARCH_KEY: The Custom Search Key to use (Create in Azure under Bing Custom image search)
 
 ## Notes on Google API
   https://cse.google.com/cse/all (In the web form where you create/edit your custom search engine enable "Image search" option and and for "Sites to search" option select "Search the entire web but emphasize included sites")
