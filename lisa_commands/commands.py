@@ -12,9 +12,10 @@ def get_return_text(raw_text):
 
     user_id, message = parse_mention(raw_text)
 
-    if message is None or message == "": return "Sorry I can't take any commands at the moment"
+    if message is None or message == "": return "What do you need? I know `image me`, and `reverse me`"
     command, query = parse_command(message)
-    if query is None: return "Sorry I can't take any commands at the moment"
+    if command is None: return "Sorry I don't know that command. I know `image me`, and `reverse me`"
+    if query is None: return "Sorry I don't usderstand your request."
     return run_command(command, query)
 
 def parse_mention(message_text):
@@ -37,7 +38,7 @@ def parse_command(message_text):
     # This will be revisited if commands are added that don't conform to that syntax
     # (e.g. image me, youtube me, gif me etc.)
     split = message_text.split("me",1)
-    return split if len(split) == 2 else None
+    return split if len(split) == 2 else [None, None]
     
     
 def run_command(command, query):
@@ -48,10 +49,21 @@ def run_command(command, query):
     :Returns the result of the bot command
     """
 
+    split = query.rsplit(' ', 2)
+
     if command.strip() == "image":
+        # If the user added 'from google' or 'from bing' to end of command
+        # use that engine.
+        if split[1].lower() == 'from':
+            if split[2].lower() == 'google':
+                return request.google_image_search(query.strip())
+            elif split[2].lower() == 'bing':
+                return request.google_image_search(query.strip())
+
+        # If the user didn't specify a search engine we just pick one
         search_engine = random.choice(['google', 'bing'])
         if search_engine == 'google':
-            return "From Googe: " + request.google_image_search(query.strip())
+            return "From Google: " + request.google_image_search(query.strip())
         else:
             return "From Bing: " + request.bing_image_search(query.strip())
         
@@ -60,4 +72,4 @@ def run_command(command, query):
         reverse = query[::-1]
         return reverse
         
-    return "I don't know that command sorry"
+    return "Sorry I don't know that command: I know `image me`, or `reverse me`"
