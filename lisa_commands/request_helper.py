@@ -52,7 +52,7 @@ def google_image_search(query):
     if 'items' in data:
         return random.choice(data["items"])["pagemap"]["cse_image"][0]['src']
     else:
-        return "Sorry! I didn't find any results."
+        return None
 
 def bing_image_search(query):
     params = urllib.parse.urlencode({
@@ -71,8 +71,29 @@ def bing_image_search(query):
     if 'value' in data and data['value']:
         return random.choice(data["value"])["contentUrl"]
     else:
-        return "Sorry! I didn't find any results."
+        return None
 
+def youtube_search(query):
+    """
+    Submit a search to youtube
+    :query what to query for
+    """
+    params = urllib.parse.urlencode({
+        'part': 'snippet',
+        'q': query, 
+        'key': GOOGLE_API_KEY, 
+        'maxResults': 10
+    })
+    request = urllib.request.Request("https://www.googleapis.com/youtube/v3/search?" + params)
+    request.add_header("Content-Type", "application/json")
+    data = json.loads(urllib.request.urlopen(request).read())
+    logging.warn(data)
+    if 'items' in data:
+        video_id = random.choice(data["items"])["id"]["videoId"]
+        return f"https://www.youtube.com/watch?v={video_id}"
+    else:
+        return None
+    
 def return_status():
     """
     We always want to return status OK to the gateway API
