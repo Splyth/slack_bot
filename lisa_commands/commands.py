@@ -11,6 +11,7 @@ def get_return_text(raw_text):
     """
 
     user_id, message = parse_mention(raw_text)
+    if user_id == None and message == None: return non_command_messages(raw_text)
 
     command, query = parse_command(message)
 
@@ -36,12 +37,20 @@ def parse_command(message_text):
     # This will be revisited if commands are added that don't conform to that syntax
     # (e.g. image me, youtube me, gif me etc.)
     if type(message_text) == str:
-        split = message_text.split("me",1)
+        split = message_text.split(" me ",1)
         if len(split) == 2: return split
 
     return [None, None]
     
+def non_command_messages(text):
+    """
+    Handles custom responses that aren't direct commands
+    Will update as I find things that I think are funny
+    text: the string we were passed from user
+    """
     
+    return None
+
 def run_command(command, query):
     """
     runs the passed in command and query
@@ -53,12 +62,14 @@ def run_command(command, query):
     if type(command) == str: command = command.strip() 
     if type(query) == str: query = query.strip()
 
-    if command == "image" or command == "img":
+    if command == "anime":
+        return request.anime_search(query)
+    elif command == 'manga':
+        return request.manga_search(query)
+    elif command == "image" or command == "img":
         return fetch_image(query)
     elif command == 'reverse':
-        logging.warn(query)
-        reverse = query[::-1]
-        return reverse
+        return query[::-1]
     elif command == 'youtube':
         text = request.youtube_search(query)
         if text == None: text = 'Sorry no results found.'
