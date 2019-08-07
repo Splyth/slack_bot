@@ -21,6 +21,10 @@ A repo where I stash info about how to make a slack bot using aws
   
   @BOT_NAME youtube me - use text after command to query youtube for a video
   
+  @BOT_NAME anime me - use text after command to query anime news network for anime info
+  
+  @BOT_NAME manga me - use text after command to query anime news network for manga info
+  
 ## Environment Variables
   BOT_TOKEN is the slack apps token (more info is (here:)[https://api.slack.com/bot-users]
   
