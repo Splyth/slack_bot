@@ -28,7 +28,7 @@ def submit_slack_request(data):
     request = urllib.request.Request(SLACK_URL)
     # Add a header mentioning that the text is URL-encoded.
     request.add_header(
-        "Content-Type", 
+        "Content-Type",
         "application/json"
     )
     request.add_header(
@@ -44,7 +44,7 @@ def anime_search(query):
     """
     params = urllib.parse.urlencode({
         'id':155,
-        'search': query, 
+        'search': query,
         'type': 'anime',
     })
 
@@ -61,7 +61,7 @@ def manga_search(query):
     """
     params = urllib.parse.urlencode({
         'id':155,
-        'search': query, 
+        'search': query,
         'type': 'manga',
     })
 
@@ -78,8 +78,8 @@ def google_image_search(query):
     :query what to query for
     """
     params = urllib.parse.urlencode({
-        'q': query, 
-        'key': GOOGLE_API_KEY, 
+        'q': query,
+        'key': GOOGLE_API_KEY,
         'cx': GOOGLE_CUSTOM_SEARCH_KEY,
         'num': 10
     })
@@ -91,12 +91,12 @@ def google_image_search(query):
 
 def bing_image_search(query):
     params = urllib.parse.urlencode({
-        'q': query, 
+        'q': query,
         'count': 10,
         'mkt': 'en-US',
         'customconfig': BING_CUSTOM_SEARCH_KEY
     })
-    
+
     request = urllib.request.Request('https://api.cognitive.microsoft.com/bingcustomsearch/v7.0/images/search?' + params)
     request.add_header("Ocp-Apim-Subscription-Key", BING_SUBSCRIPTION_KEY)
 
@@ -114,8 +114,8 @@ def youtube_search(query):
     """
     params = urllib.parse.urlencode({
         'part': 'snippet',
-        'q': query, 
-        'key': GOOGLE_API_KEY, 
+        'q': query,
+        'key': GOOGLE_API_KEY,
         'maxResults': 10
     })
     request = urllib.request.Request("https://www.googleapis.com/youtube/v3/search?" + params)
@@ -127,7 +127,30 @@ def youtube_search(query):
         return f"https://www.youtube.com/watch?v={video_id}"
     else:
         return None
-    
+
+def wikipedia_search(query):
+    """
+    Submit a search to wikipedia
+    :query what to query for
+    """
+    request_params = {
+    'action':'query',
+    'list':'search',
+    'srsearch': query,
+    'format':'json'
+    }
+
+    request = urllib.request.Request('https://en.wikipedia.org/w/api.php', request_params)
+
+    data = json.loads(urllib.request.urlopen(request).read())
+
+    if 'query' in data:
+        wikipedia_title = data['query']['search'][0]['title']
+        link_title = '_'.join(wikipedia_title.split())
+        return f"https://en.wikipedia.org/wiki/{link_title}"
+    else:
+        return None
+
 def return_status():
     """
     We always want to return status OK to the gateway API
