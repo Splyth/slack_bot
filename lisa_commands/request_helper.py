@@ -3,6 +3,8 @@ import logging
 import os
 import urllib
 import random
+import re
+
 # from googlesearch import search_images Need to figure out how to install this
 
 # Grab the Bot OAuth token from the environment.
@@ -22,7 +24,6 @@ BING_CUSTOM_SEARCH_KEY = os.environ['BING_CUSTOM_SEARCH_KEY']
 SLACK_URL = "https://slack.com/api/chat.postMessage"
 
 def submit_slack_request(data):
-    logging.warn
     # Construct the HTTP request that will be sent to the Slack API.
     request = urllib.request.Request(SLACK_URL)
     # Add a header mentioning that the text is URL-encoded.
@@ -36,6 +37,40 @@ def submit_slack_request(data):
 
     # Fire off the request!
     urllib.request.urlopen(request, data).read()
+
+def anime_search(query):
+    """
+    search anilist for series info
+    """
+    params = urllib.parse.urlencode({
+        'id':155,
+        'search': query, 
+        'type': 'anime',
+    })
+
+    data = urllib.request.urlopen("https://www.animenewsnetwork.com/encyclopedia/reports.xml?" + params).read().decode('utf-8')
+    show_ids = re.search("<id>(\d+)</id>", data)
+    if show_ids is not None:
+        return f"https://www.animenewsnetwork.com/encyclopedia/anime.php?id={''.join(i for i in show_ids.groups(1) if i.isdigit())}"
+    else:
+        return None
+
+def manga_search(query):
+    """
+    search anilist for series info
+    """
+    params = urllib.parse.urlencode({
+        'id':155,
+        'search': query, 
+        'type': 'manga',
+    })
+
+    data = urllib.request.urlopen("https://www.animenewsnetwork.com/encyclopedia/reports.xml?" + params).read().decode('utf-8')
+    show_ids = re.search("<id>(\d+)</id>", data)
+    if show_ids is not None:
+        return f"https://www.animenewsnetwork.com/encyclopedia/anime.php?id={''.join(i for i in show_ids.groups(1) if i.isdigit())}"
+    else:
+        return None
 
 def google_image_search(query):
     """
@@ -67,7 +102,6 @@ def bing_image_search(query):
 
     data = json.loads(urllib.request.urlopen(request).read())
 
-    logging.warn(data)
     if 'value' in data and data['value']:
         return random.choice(data["value"])["contentUrl"]
     else:
@@ -87,7 +121,7 @@ def youtube_search(query):
     request = urllib.request.Request("https://www.googleapis.com/youtube/v3/search?" + params)
     request.add_header("Content-Type", "application/json")
     data = json.loads(urllib.request.urlopen(request).read())
-    logging.warn(data)
+
     if 'items' in data:
         video_id = random.choice(data["items"])["id"]["videoId"]
         return f"https://www.youtube.com/watch?v={video_id}"
