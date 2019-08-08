@@ -133,14 +133,14 @@ def wikipedia_search(query):
     Submit a search to wikipedia
     :query what to query for
     """
-    request_params = {
+    request_params = urilib.parse.urlencode({
     'action':'query',
     'list':'search',
     'srsearch': query,
     'format':'json'
-    }
+    })
 
-    request = urllib.request.Request('https://en.wikipedia.org/w/api.php', request_params)
+    request = urllib.request.Request('https://en.wikipedia.org/w/api.php?' + request_params)
 
     data = json.loads(urllib.request.urlopen(request).read())
 
