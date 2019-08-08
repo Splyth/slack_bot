@@ -15,7 +15,7 @@ A repo where I stash info about how to make a slack bot using aws
 ## Invoke
   Once running the bot knows the following commands
   
-  @BOT_NAME reverse me - reverse text enetered after command
+  @BOT_NAME reverse me - reverse text entered after command
   
   @BOT_NAME image me - use text after command to query Google for an image
   
@@ -24,6 +24,8 @@ A repo where I stash info about how to make a slack bot using aws
   @BOT_NAME anime me - use text after command to query anime news network for anime info
   
   @BOT_NAME manga me - use text after command to query anime news network for manga info
+
+  @BOT_NAME wiki me - use text after command to query wikipedia for an article
   
 ## Environment Variables
   BOT_TOKEN is the slack apps token (more info is (here:)[https://api.slack.com/bot-users]
