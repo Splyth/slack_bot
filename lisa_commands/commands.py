@@ -74,6 +74,8 @@ def run_command(command, query):
         text = request.youtube_search(query)
         if text == None: text = 'Sorry no results found.'
         return text
+    elif command == 'wiki' or command == 'wikipedia':
+        return request.wikipedia_search(query)
     return "Sorry I don't know that command. Try `image me` `youtube me` or `reverse me`"
     
 def fetch_image(query):

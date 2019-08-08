@@ -127,6 +127,29 @@ def youtube_search(query):
         return f"https://www.youtube.com/watch?v={video_id}"
     else:
         return None
+
+def wikipedia_search(query):
+    """
+    Submit a search to wikipedia
+    :query what to query for
+    """
+    request_params = {
+    'action':'query',
+    'list':'search',
+    'srsearch': query,
+    'format':'json'
+    }
+
+    request = urllib.request.Request('https://en.wikipedia.org/w/api.php', request_params)
+
+    data = json.loads(urllib.request.urlopen(request).read())
+
+    if 'query' in data:
+        wikipedia_title = data['query']['search'][0]['title']
+        link_title = '_'.join(wikipedia_title.split())
+        return f"https://en.wikipedia.org/wiki/{link_title}"
+    else:
+        return None
     
 def return_status():
     """
