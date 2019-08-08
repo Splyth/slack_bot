@@ -133,7 +133,7 @@ def wikipedia_search(query):
     Submit a search to wikipedia
     :query what to query for
     """
-    request_params = urilib.parse.urlencode({
+    request_params = urllib.parse.urlencode({
     'action':'query',
     'list':'search',
     'srsearch': query,
