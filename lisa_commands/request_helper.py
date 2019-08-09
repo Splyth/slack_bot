@@ -19,6 +19,9 @@ BING_SUBSCRIPTION_KEY = os.environ['BING_SUBSCRIPTION_KEY']
 # The Custom Search API (uses bing) in Mircorsoft Azure to use
 BING_CUSTOM_SEARCH_KEY = os.environ['BING_CUSTOM_SEARCH_KEY']
 
+# Giphy API Key
+GIPHY_API_KEY = os.environ['GIPHY_API_KEY']
+
 # Define the URL of the targeted Slack API resource.
 # We'll send our replies there.
 SLACK_URL = "https://slack.com/api/chat.postMessage"
@@ -28,7 +31,7 @@ def submit_slack_request(data):
     request = urllib.request.Request(SLACK_URL)
     # Add a header mentioning that the text is URL-encoded.
     request.add_header(
-        "Content-Type", 
+        "Content-Type",
         "application/json"
     )
     request.add_header(
@@ -38,39 +41,22 @@ def submit_slack_request(data):
     # Fire off the request!
     urllib.request.urlopen(request, data).read()
 
-def anime_search(query):
+def anime_news_network_search(command, query):
     """
     search anilist for series info
     """
     params = urllib.parse.urlencode({
         'id':155,
-        'search': query, 
-        'type': 'anime',
+        'search': query,
+        'type': command
     })
 
     data = urllib.request.urlopen("https://www.animenewsnetwork.com/encyclopedia/reports.xml?" + params).read().decode('utf-8')
     show_ids = re.search("<id>(\d+)</id>", data)
     if show_ids is not None:
-        return f"https://www.animenewsnetwork.com/encyclopedia/anime.php?id={''.join(i for i in show_ids.groups(1) if i.isdigit())}"
-    else:
-        return None
+        return f"https://www.animenewsnetwork.com/encyclopedia/{command}.php?id={''.join(i for i in show_ids.groups(1) if i.isdigit())}"
 
-def manga_search(query):
-    """
-    search anilist for series info
-    """
-    params = urllib.parse.urlencode({
-        'id':155,
-        'search': query, 
-        'type': 'manga',
-    })
-
-    data = urllib.request.urlopen("https://www.animenewsnetwork.com/encyclopedia/reports.xml?" + params).read().decode('utf-8')
-    show_ids = re.search("<id>(\d+)</id>", data)
-    if show_ids is not None:
-        return f"https://www.animenewsnetwork.com/encyclopedia/anime.php?id={''.join(i for i in show_ids.groups(1) if i.isdigit())}"
-    else:
-        return None
+    return None
 
 def google_image_search(query):
     """
@@ -78,25 +64,25 @@ def google_image_search(query):
     :query what to query for
     """
     params = urllib.parse.urlencode({
-        'q': query, 
-        'key': GOOGLE_API_KEY, 
+        'q': query,
+        'key': GOOGLE_API_KEY,
         'cx': GOOGLE_CUSTOM_SEARCH_KEY,
         'num': 10
     })
     data = json.loads(urllib.request.urlopen("https://www.googleapis.com/customsearch/v1?" + params).read())
     if 'items' in data:
         return random.choice(data["items"])["pagemap"]["cse_image"][0]['src']
-    else:
-        return None
+
+    return None
 
 def bing_image_search(query):
     params = urllib.parse.urlencode({
-        'q': query, 
+        'q': query,
         'count': 10,
         'mkt': 'en-US',
         'customconfig': BING_CUSTOM_SEARCH_KEY
     })
-    
+
     request = urllib.request.Request('https://api.cognitive.microsoft.com/bingcustomsearch/v7.0/images/search?' + params)
     request.add_header("Ocp-Apim-Subscription-Key", BING_SUBSCRIPTION_KEY)
 
@@ -104,8 +90,8 @@ def bing_image_search(query):
 
     if 'value' in data and data['value']:
         return random.choice(data["value"])["contentUrl"]
-    else:
-        return None
+
+    return None
 
 def youtube_search(query):
     """
@@ -114,8 +100,8 @@ def youtube_search(query):
     """
     params = urllib.parse.urlencode({
         'part': 'snippet',
-        'q': query, 
-        'key': GOOGLE_API_KEY, 
+        'q': query,
+        'key': GOOGLE_API_KEY,
         'maxResults': 10
     })
     request = urllib.request.Request("https://www.googleapis.com/youtube/v3/search?" + params)
@@ -125,8 +111,8 @@ def youtube_search(query):
     if 'items' in data:
         video_id = random.choice(data["items"])["id"]["videoId"]
         return f"https://www.youtube.com/watch?v={video_id}"
-    else:
-        return None
+
+    return None
 
 def wikipedia_search(query):
     """
@@ -134,10 +120,10 @@ def wikipedia_search(query):
     :query what to query for
     """
     request_params = urllib.parse.urlencode({
-    'action':'query',
-    'list':'search',
-    'srsearch': query,
-    'format':'json'
+        'action':'query',
+        'list':'search',
+        'srsearch': query,
+        'format':'json'
     })
 
     request = urllib.request.Request('https://en.wikipedia.org/w/api.php?' + request_params)
@@ -148,9 +134,35 @@ def wikipedia_search(query):
         wikipedia_title = data['query']['search'][0]['title']
         link_title = '_'.join(wikipedia_title.split())
         return f"https://en.wikipedia.org/wiki/{link_title}"
-    else:
-        return None
-    
+
+    return None
+
+def gify_search(command, query):
+    """
+    submit a search to giphy
+    :query what to query for
+    """
+
+    limit = 10
+    request_params = urllib.parse.urlencode({
+        'api_key': GIPHY_API_KEY,
+        'limit': limit,
+        'q': query,
+        'rating':'pg-13',
+        'lang': 'en'
+    })
+
+    # I appended the s on purpose the end point expects gifs or stickers
+    # and I'm being lazy
+    url = f'https://api.giphy.com/v1/{command}s/search?'
+    request = urllib.request.Request(url + request_params)
+    response = json.loads(urllib.request.urlopen(request).read())
+
+    if response['data']:
+        return random.choice(response['data'])['images']['original']['url']
+
+    return None
+
 def return_status():
     """
     We always want to return status OK to the gateway API

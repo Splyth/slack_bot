@@ -26,9 +26,13 @@ A repo where I stash info about how to make a slack bot using aws
   @BOT_NAME manga me - use text after command to query anime news network for manga info
 
   @BOT_NAME wiki me - use text after command to query wikipedia for an article
+
+  @BOT_NAME gif me - use text after command to query giphey for gif
+
+  @BOT_NAME sticker me - use text after command to query giphey for sticker
   
 ## Environment Variables
-  BOT_TOKEN is the slack apps token (more info is (here:)[https://api.slack.com/bot-users]
+  BOT_TOKEN is the slack apps token more info is (here:)[https://api.slack.com/bot-users]
   
   GOOGLE API KEY: You can generate one in the Google API Under Credentials
   
@@ -37,6 +41,8 @@ A repo where I stash info about how to make a slack bot using aws
   BING_SUBSCRIPTION_KEY: The Subscription Key from the Azure Account to use
 
   BING_CUSTOM_SEARCH_KEY: The Custom Search Key to use (Create in Azure under Bing Custom image search)
+
+  GIPHY_API_KEY: A Giphey API KEY (here:)[https://developers.giphy.com/docs/api#quick-start-guide]
 
 ## Notes on Google API
   https://cse.google.com/cse/all (In the web form where you create/edit your custom search engine enable "Image search" option and and for "Sites to search" option select "Search the entire web but emphasize included sites")
