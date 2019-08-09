@@ -6,10 +6,12 @@ A repo where I stash info about how to make a slack bot using aws
   
   Python 3.6 Runtime (Select once you have your lamabda function environment and API Gateway created)
   
-  (Google API Account)[https://console.developers.google.com]
+  (Google Account)[https://console.developers.google.com]
   
   Google Custom Search API Enabled: Once your Google API Account is made enable "Custom Search API" for your project
   
+  (Azure Account)[https://azure.microsoft.com/en-us/account/]
+
   Azure Custom Search API Enabled: Once your Microsoft Azure account is made enable "Custom Search API" for your project
   
   Giphy Access: https://developers.giphy.com/ 
