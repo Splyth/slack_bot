@@ -36,6 +36,12 @@ A repo where I stash info about how to make a slack bot using aws
   @BOT_NAME gif me - use text after command to query giphey for gif
 
   @BOT_NAME sticker me - use text after command to query giphey for sticker
+
+  @BOT_NAME tableflip - responds with a tableflip emoji
+
+  @BOT_NAME putitiback - responds with a reversetableflip emoji
+
+  @BOT_NAME flipcoin - responds with either head or tails
   
 # Environment Variables
   BOT_TOKEN is the slack apps token more info is (here:)[https://api.slack.com/bot-users]
