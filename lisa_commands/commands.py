@@ -1,3 +1,8 @@
+"""
+handles parsing text and running the command specified from it
+then gets the string to pass back to slack
+"""
+
 import logging
 import random
 import re
@@ -9,13 +14,10 @@ def get_return_text(raw_text):
     :raw_text the raw message text we received
     :return: text we want to return to slack
     """
-
-    user_id, message = parse_mention(raw_text)
-    if user_id is None and message is None: return non_command_messages(raw_text)
-
+    _user_id, message = parse_mention(raw_text)
     command, query = parse_command(message)
 
-    return run_command(command, query)
+    return run_command(command.strip(), query)
 
 def parse_mention(message_text):
     """
@@ -33,23 +35,18 @@ def parse_command(message_text):
     :message_text the text we're searching
     :returns: command mentioned and query string
     """
-    # we assume all commands are at the start of the line and end with the "me"
-    # This will be revisited if commands are added that don't conform to that syntax
-    # (e.g. image me, youtube me, gif me etc.)
-    if type(message_text) == str:
-        split = message_text.split(" me ", 1)
-        if len(split) == 2: return split
 
-    return [None, None]
-    
-def non_command_messages(text):
-    """
-    Handles custom responses that aren't direct commands
-    Will update as I find things that I think are funny
-    text: the string we were passed from user
-    """
+    # for commands using the '* me' syntax (e.g. image me, youtube me, gif me etc.)
+    split = message_text.split(" me ", 1)
+    if len(split) == 2: return split
 
-    return None
+    # If command isn't a '* me' command assume a single word command (e.g. decide, flipcoin, etc)
+    split = message_text.split(' ', 1)
+    if len(split) == 2: return split
+
+    # else no command
+    return ['', '']
+
 
 def run_command(command, query):
     """
@@ -59,27 +56,20 @@ def run_command(command, query):
     :Returns the result of the bot command
     """
 
-    if type(command) == str: command = command.strip()
-    if type(query) == str: query = query.strip()
+    text = ''
+    if not command: text = 'Did you need something?'
+    if command in ["anime", 'manga']: text = request.anime_news_network_search(command, query)
+    elif command in ["image", "img"]: text = fetch_image(query)
+    elif command == 'reverse': text = query[::-1]
+    elif command == 'youtube': text = request.youtube_search(query)
+    elif command in ['wiki', 'wikipedia']: text = request.wikipedia_search(query)
+    elif command in ['gif', 'sticker']: text = request.gify_search(command, query)
+    elif command == 'tableflip': text = random.choice(["(ﾉಥ益ಥ）ﾉ ┻━┻ ", "┻━┻ ︵ヽ(`Д´)ﾉ︵ ┻━┻    ", "(ノಠ益ಠ)ノ彡┻━┻ ", "ヽ(｀Д´)ﾉ┻━┻", " (ノ≥∇))ノ┻━┻ ", "(╯°□°）╯︵ ┻━┻ "])
+    elif command == 'putitback': text = random.choice(["┬─┬ノ( º _ ºノ)", r"┬──┬ ¯\_(ツ)"])
+    elif command == 'flipcoin': text = f":coin: :coin: {random.choice(['HEADS', 'TAILS'])} :coin: :coin:"
+    else: text = "Sorry I don't know that command. Try `image me` `youtube me` or `reverse me`"
 
-    text = None
-    if command == "anime" or command == 'manga':
-        text = request.anime_news_network_search(command, query)
-    elif command == "image" or command == "img":
-        text = fetch_image(query)
-    elif command == 'reverse':
-        text = query[::-1]
-    elif command == 'youtube':
-        text = request.youtube_search(query)
-    elif command == 'wiki' or command == 'wikipedia':
-        text = request.wikipedia_search(query)
-    elif command == 'gif' or command == 'sticker':
-        text = request.gify_search(command, query)
-    else:
-        return "Sorry I don't know that command. Try `image me` `youtube me` or `reverse me`"
-
-    if text is None: 
-        text = "Sorry no results found"
+    if not text: text = "Sorry no results found"
 
     return text
 
@@ -100,8 +90,7 @@ def fetch_image(query):
         elif split[2].lower() == 'bing':
             text = request.bing_image_search(query)
 
-        if text is None: 
-            text = 'Sorry no results found.'
+        if text is None: text = 'Sorry no results found.'
         return text
     # If the user didn't specify a search engine we just pick one
     search_engine = random.choice(['google', 'bing'])
@@ -109,4 +98,3 @@ def fetch_image(query):
         return "From Google: " + request.google_image_search(query)
 
     return "From Bing: " + request.bing_image_search(query)
-   
