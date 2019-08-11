@@ -42,6 +42,9 @@ def parse_command(message_text):
 
     # If command isn't a '* me' command assume a single word command (e.g. decide, flipcoin, etc)
     split = message_text.split(' ', 1)
+    if len(split) == 1: return [split[0].strip(), '']
+
+    # if command is a single word command with text (e.g. decide, shame, etc)
     if len(split) == 2: return split
 
     # else no command
@@ -67,6 +70,7 @@ def run_command(command, query):
     elif command == 'tableflip': text = random.choice(["(ﾉಥ益ಥ）ﾉ ┻━┻ ", "┻━┻ ︵ヽ(`Д´)ﾉ︵ ┻━┻    ", "(ノಠ益ಠ)ノ彡┻━┻ ", "ヽ(｀Д´)ﾉ┻━┻", " (ノ≥∇))ノ┻━┻ ", "(╯°□°）╯︵ ┻━┻ "])
     elif command == 'putitback': text = random.choice(["┬─┬ノ( º _ ºノ)", r"┬──┬ ¯\_(ツ)"])
     elif command == 'flipcoin': text = f":coin: :coin: {random.choice(['HEADS', 'TAILS'])} :coin: :coin:"
+    elif command == 'decide': text = f"I'm gonna go with: {random.choice(query.split(' '))}"
     else: text = "Sorry I don't know that command. Try `image me` `youtube me` or `reverse me`"
 
     if not text: text = "Sorry no results found"
