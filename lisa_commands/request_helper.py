@@ -36,7 +36,7 @@ def submit_slack_request(data, chat_action):
     """
     # Construct the HTTP request that will be sent to the Slack API.
     request = urllib.request.Request(SLACK_URL + chat_action)
-    # Add a header mentioning that the text is URL-encoded.
+    # Add a header mentioning that the text is JSON.
     request.add_header(
         "Content-Type",
         "application/json"
