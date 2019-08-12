@@ -42,6 +42,20 @@ A repo where I stash info about how to make a slack bot using aws
   @BOT_NAME putitiback - responds with a reversetableflip emoji
 
   @BOT_NAME flipcoin - responds with either head or tails
+
+  @BOT_NAME decide - responds randomly with one of the words after this command
+
+  @BOT_NAME callthecops - responds with an image of anime cops with the caption "You Called"
+
+  @BOT_NAME kill me - responds with a gif with kill me as a search
+
+  @BOT_USER shame <User ID> - You must @USER_NAME (might figure out how to display with a user name search)
+
+# Other Bot Interactions:
+  ## Delete Bot Message:
+    If a bot has posted something you didn't want it to. You can respond with an emoji to have the
+    bot delete that message. Currently the emoji is :delet: Yes it's misspelled. If you ever make your
+    own feel free to change it in the code or make it configurable
   
 # Environment Variables
   BOT_TOKEN is the slack apps token more info is (here:)[https://api.slack.com/bot-users]

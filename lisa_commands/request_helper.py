@@ -1,3 +1,6 @@
+"""
+A wrapper aaround external requests to APIs
+"""
 import json
 import logging
 import os
@@ -24,12 +27,16 @@ GIPHY_API_KEY = os.environ['GIPHY_API_KEY']
 
 # Define the URL of the targeted Slack API resource.
 # We'll send our replies there.
-SLACK_URL = "https://slack.com/api/chat.postMessage"
+SLACK_URL = "https://slack.com/api/"
 
-def submit_slack_request(data):
+def submit_slack_request(data, chat_action):
+    """
+    Submit request obj to slack
+    data: a dict object to be placed in the JSON body
+    """
     # Construct the HTTP request that will be sent to the Slack API.
-    request = urllib.request.Request(SLACK_URL)
-    # Add a header mentioning that the text is URL-encoded.
+    request = urllib.request.Request(SLACK_URL + chat_action)
+    # Add a header mentioning that the text is JSON.
     request.add_header(
         "Content-Type",
         "application/json"
@@ -51,8 +58,8 @@ def anime_news_network_search(command, query):
         'type': command
     })
 
-    data = urllib.request.urlopen("https://www.animenewsnetwork.com/encyclopedia/reports.xml?" + params).read().decode('utf-8')
-    show_ids = re.search("<id>(\d+)</id>", data)
+    data = urllib.request.urlopen(r'https://www.animenewsnetwork.com/encyclopedia/reports.xml?' + params).read().decode('utf-8')
+    show_ids = re.search(r"<id>(\d+)</id>", data)
     if show_ids is not None:
         return f"https://www.animenewsnetwork.com/encyclopedia/{command}.php?id={''.join(i for i in show_ids.groups(1) if i.isdigit())}"
 
@@ -76,6 +83,10 @@ def google_image_search(query):
     return None
 
 def bing_image_search(query):
+    """
+    Submit a search to bing for images
+    :query what to query for
+    """
     params = urllib.parse.urlencode({
         'q': query,
         'count': 10,
