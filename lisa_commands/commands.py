@@ -27,7 +27,7 @@ def parse_mention(message_text):
     """
     matches = re.search("^<@(|[WU].+?)>(.*)", message_text)
     # the first group contains the username, the second group contains the remaining message
-    return (matches.group(1), matches.group(2).strip()) if matches else (None, None)
+    return (matches.group(1), matches.group(2).strip().lower()) if matches else (None, None)
 
 def parse_command(message_text):
     """
@@ -44,6 +44,7 @@ def parse_command(message_text):
     split = message_text.split(' ', 1)
     if len(split) == 1: return [split[0].strip(), '']
 
+    logging.warning(split)
     # if command is a single word command with text (e.g. decide, shame, etc)
     if len(split) == 2: return split
 
@@ -71,6 +72,19 @@ def run_command(command, query):
     elif command == 'putitback': text = random.choice(["┬─┬ノ( º _ ºノ)", r"┬──┬ ¯\_(ツ)"])
     elif command == 'flipcoin': text = f":coin: :coin: {random.choice(['HEADS', 'TAILS'])} :coin: :coin:"
     elif command == 'decide': text = f"I'm gonna go with: {random.choice(query.split(' '))}"
+    elif command == 'callthecops': text = 'You called? ' + fetch_image('anime cops from bing')
+    elif command == 'kill': text = request.gify_search('gif', 'kill me')
+    elif command == 'shame':
+        user = query.strip().upper()
+        text = random.choice([
+            'Shame on you! ' + user + 'You should know better!',
+            user + ' ಠ_ಠ',
+            user + ' You have made a mockery of yourself. Turn in your weeabo credentials!',
+            user + ' :blobdisapproval:',
+            user + ' :disappoint:',
+            user + ' you did bad and you should feel bad',
+            user + ' :smh:',
+        ])
     else: text = "Sorry I don't know that command. Try `image me` `youtube me` or `reverse me`"
 
     if not text: text = "Sorry no results found"
