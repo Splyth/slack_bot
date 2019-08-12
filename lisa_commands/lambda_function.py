@@ -19,7 +19,6 @@ def lambda_handler(data, _context):
         return slack_event["challenge"]
 
     if "bot_id" in slack_event: # Prevent bot from responding to itself
-        logging.warning("Ignore bot event")
         return request.return_status()
 
     chat_action = 'chat.postMessage'

@@ -44,7 +44,6 @@ def parse_command(message_text):
     split = message_text.split(' ', 1)
     if len(split) == 1: return [split[0].strip(), '']
 
-    logging.warning(split)
     # if command is a single word command with text (e.g. decide, shame, etc)
     if len(split) == 2: return split
 
