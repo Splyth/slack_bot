@@ -46,7 +46,6 @@ def parse_command(message_text):
     split = message_text.split(' ', 1)
     if len(split) == 1: return [split[0].strip(), '']
 
-    logging.warning(split)
     # if command is a single word command with text (e.g. decide, shame, etc)
     if len(split) == 2: return split
 
@@ -63,7 +62,6 @@ def run_command(command, query, message_user):
     :Returns the result of the bot command
     """
 
-    logging.warning(query)
     text = ''
     if not command: text = 'Did you need something?'
     if command in ["anime", 'manga']: text = request.anime_news_network_search(command, query)
