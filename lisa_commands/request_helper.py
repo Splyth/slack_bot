@@ -46,7 +46,7 @@ def submit_slack_request(data, chat_action):
     )
 
     # Fire off the request!
-    urllib.request.urlopen(request, data).read()
+    return urllib.request.urlopen(request, json.dumps(data).encode('utf-8')).read()
 
 def anime_news_network_search(command, query):
     """
