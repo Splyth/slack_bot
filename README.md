@@ -21,6 +21,8 @@ A repo where I stash info about how to make a slack bot using aws
 # Invoke
   Once running the bot knows the following commands
   
+  @BOT_NAME help - sends user a private message with all known commands
+
   @BOT_NAME reverse me - reverse text entered after command
   
   @BOT_NAME image me - use text after command to query Google for an image
@@ -39,7 +41,7 @@ A repo where I stash info about how to make a slack bot using aws
 
   @BOT_NAME tableflip - responds with a tableflip emoji
 
-  @BOT_NAME putitiback - responds with a reversetableflip emoji
+  @BOT_NAME putitback - responds with a reversetableflip emoji
 
   @BOT_NAME flipcoin - responds with either head or tails
 

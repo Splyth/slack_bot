@@ -19,14 +19,16 @@ def lambda_handler(data, _context):
         return slack_event["challenge"]
 
     if "bot_id" in slack_event: # Prevent bot from responding to itself
+        logging.warning("Ignore bot event")
         return request.return_status()
 
     chat_action = 'chat.postMessage'
     if 'app_mention' in slack_event['type']:
         # Get the ID of the channel where the message was posted.
+        
         data = {
             'channel': slack_event["channel"],
-            'text': get_return_text(slack_event['text'])
+            'text': get_return_text(slack_event['text'], slack_event['user'])
         }
     # Currently the emoji that causes the delete logic is 'delet' (Yes it's mispelled)
     elif 'reaction_added' in slack_event['type'] and 'delet' in slack_event["reaction"]:
@@ -36,5 +38,5 @@ def lambda_handler(data, _context):
             'ts': slack_event['item']['ts']
         }
 
-    request.submit_slack_request(json.dumps(data).encode('utf-8'), chat_action)
+    request.submit_slack_request(data, chat_action)
     return request.return_status()
