@@ -48,20 +48,24 @@ def submit_slack_request(data, chat_action):
     # Fire off the request!
     return urllib.request.urlopen(request, json.dumps(data).encode('utf-8')).read()
 
-def anime_news_network_search(command, query):
+def anime_news_network_search(media_type, query):
     """
     search anilist for series info
+    :type [anime|manga] string
+    :query what to search for
     """
     params = urllib.parse.urlencode({
         'id':155,
-        'search': query,
-        'type': command
+        'search': query.strip(),
+        'type': media_type
     })
 
     data = urllib.request.urlopen(r'https://www.animenewsnetwork.com/encyclopedia/reports.xml?' + params).read().decode('utf-8')
+    logging.warning(data)
     show_ids = re.search(r"<id>(\d+)</id>", data)
+    logging.warning(show_ids)
     if show_ids is not None:
-        return f"https://www.animenewsnetwork.com/encyclopedia/{command}.php?id={''.join(i for i in show_ids.groups(1) if i.isdigit())}"
+        return f"https://www.animenewsnetwork.com/encyclopedia/{media_type}.php?id={''.join(i for i in show_ids.groups(1) if i.isdigit())}"
 
     return None
 
@@ -148,9 +152,10 @@ def wikipedia_search(query):
 
     return None
 
-def gify_search(command, query):
+def gify_search(media_type, query):
     """
     submit a search to giphy
+    :type [gifs|stickers]
     :query what to query for
     """
 
@@ -163,9 +168,8 @@ def gify_search(command, query):
         'lang': 'en'
     })
 
-    # I appended the s on purpose the end point expects gifs or stickers
-    # and I'm being lazy
-    url = f'https://api.giphy.com/v1/{command}s/search?'
+
+    url = f'https://api.giphy.com/v1/{media_type}/search?'
     request = urllib.request.Request(url + request_params)
     response = json.loads(urllib.request.urlopen(request).read())
 

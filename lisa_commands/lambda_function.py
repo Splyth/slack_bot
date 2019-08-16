@@ -25,10 +25,9 @@ def lambda_handler(data, _context):
     chat_action = 'chat.postMessage'
     if 'app_mention' in slack_event['type']:
         # Get the ID of the channel where the message was posted.
-        
         data = {
             'channel': slack_event["channel"],
-            'text': get_return_text(slack_event['text'], slack_event['user'])
+            'text': get_return_text(slack_event)
         }
         if 'thread_ts' in slack_event:
             data['thread_ts'] = slack_event['thread_ts']
