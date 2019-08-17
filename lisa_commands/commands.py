@@ -26,7 +26,7 @@ def parse_mention(text):
 
     text - a dictionary containing slack event information
 
-    Returns an 2 element array of [USER_ID, rest_of_message]
+    Returns an 2 element tuple of [USER_ID, rest_of_message]
     """
 
     matches = re.search("^<@(|[WU].+?)>(.*)", text)
