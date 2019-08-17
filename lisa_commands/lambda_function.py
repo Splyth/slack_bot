@@ -1,9 +1,8 @@
 """
 Entry point. Called by the AWS lambda service.
 """
-import logging
 import json
-from commands import get_return_text
+from commands import message_text
 import request_helper as request
 
 def lambda_handler(data, _context):
@@ -19,7 +18,6 @@ def lambda_handler(data, _context):
         return slack_event["challenge"]
 
     if "bot_id" in slack_event: # Prevent bot from responding to itself
-        logging.warning("Ignore bot event")
         return request.return_status()
 
     chat_action = 'chat.postMessage'
@@ -27,7 +25,7 @@ def lambda_handler(data, _context):
         # Get the ID of the channel where the message was posted.
         data = {
             'channel': slack_event["channel"],
-            'text': get_return_text(slack_event)
+            'text': message_text(slack_event)
         }
         if 'thread_ts' in slack_event:
             data['thread_ts'] = slack_event['thread_ts']

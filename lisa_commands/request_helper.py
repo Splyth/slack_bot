@@ -2,7 +2,6 @@
 A wrapper aaround external requests to APIs
 """
 import json
-import logging
 import os
 import urllib
 import random
@@ -60,12 +59,14 @@ def anime_news_network_search(media_type, query):
         'type': media_type
     })
 
-    data = urllib.request.urlopen(r'https://www.animenewsnetwork.com/encyclopedia/reports.xml?' + params).read().decode('utf-8')
-    logging.warning(data)
+    data = urllib.request.urlopen(
+        r'https://www.animenewsnetwork.com/encyclopedia/reports.xml?' + params
+    ).read().decode('utf-8')
+
     show_ids = re.search(r"<id>(\d+)</id>", data)
-    logging.warning(show_ids)
     if show_ids is not None:
-        return f"https://www.animenewsnetwork.com/encyclopedia/{media_type}.php?id={''.join(i for i in show_ids.groups(1) if i.isdigit())}"
+        show_id = ''.join(i for i in show_ids.groups(1) if i.isdigit())
+        return f"https://www.animenewsnetwork.com/encyclopedia/{media_type}.php?id={show_id}"
 
     return None
 
@@ -80,7 +81,9 @@ def google_image_search(query):
         'cx': GOOGLE_CUSTOM_SEARCH_KEY,
         'num': 10
     })
-    data = json.loads(urllib.request.urlopen("https://www.googleapis.com/customsearch/v1?" + params).read())
+    data = json.loads(
+        urllib.request.urlopen("https://www.googleapis.com/customsearch/v1?" + params).read()
+    )
     if 'items' in data:
         return random.choice(data["items"])["pagemap"]["cse_image"][0]['src']
 
@@ -98,7 +101,10 @@ def bing_image_search(query):
         'customconfig': BING_CUSTOM_SEARCH_KEY
     })
 
-    request = urllib.request.Request('https://api.cognitive.microsoft.com/bingcustomsearch/v7.0/images/search?' + params)
+    request = urllib.request.Request(
+        'https://api.cognitive.microsoft.com/bingcustomsearch/v7.0/images/search?' + params
+    )
+
     request.add_header("Ocp-Apim-Subscription-Key", BING_SUBSCRIPTION_KEY)
 
     data = json.loads(urllib.request.urlopen(request).read())
