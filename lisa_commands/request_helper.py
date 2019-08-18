@@ -9,8 +9,10 @@ import re
 
 # from googlesearch import search_images Need to figure out how to install this
 
-# Grab the Bot OAuth token from the environment.
-BOT_TOKEN = os.environ["BOT_TOKEN"]
+# Bot OAuth token from the environment.
+BOT_TOKEN = os.environ["BOT_TOKEN"] # stats with xoxb
+# User who made the bot Oauth Token (found in API above bot token starts with xoxp)
+SLACK_USER_TOKEN = os.environ["SLACK_USER_TOKEN"]
 
 # GOOGLE API KEY info can be found here: https://developers.google.com/custom-search/
 GOOGLE_API_KEY = os.environ['GOOGLE_API_KEY']
@@ -28,10 +30,12 @@ GIPHY_API_KEY = os.environ['GIPHY_API_KEY']
 # We'll send our replies there.
 SLACK_URL = "https://slack.com/api/"
 
-def submit_slack_request(data, chat_action):
+def submit_slack_request(data, chat_action, auth_type='BOT'):
     """
     Submit request obj to slack
-    data: a dict object to be placed in the JSON body
+    data - a dict object to be placed in the JSON body
+    chat_action - the slack action to perform
+    auth_type - ['BOT'| 'USER'] Which token to use (default is bot)
     """
     # Construct the HTTP request that will be sent to the Slack API.
     request = urllib.request.Request(SLACK_URL + chat_action)
@@ -40,12 +44,27 @@ def submit_slack_request(data, chat_action):
         "Content-Type",
         "application/json"
     )
+
+    token = BOT_TOKEN
+    if auth_type == 'USER':
+        token = SLACK_USER_TOKEN
+
     request.add_header(
-        "Authorization", 'Bearer {}'.format(BOT_TOKEN),
+        "Authorization", f'Bearer {token}',
     )
 
     # Fire off the request!
     return urllib.request.urlopen(request, json.dumps(data).encode('utf-8')).read()
+
+def direct_message_channel_search(slack_event):
+    """
+    slack_event - a dict containing the slack event
+
+    Returns the channel_id for the dm between the bot and the user who sent the message
+    """
+    return json.loads(
+        submit_slack_request({'user': slack_event['user']}, 'im.open')
+    )['channel']['id']
 
 def anime_news_network_search(media_type, query):
     """
