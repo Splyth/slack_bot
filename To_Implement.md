@@ -3,6 +3,9 @@
 2. Bot should wish herself a happy birthday on March 3rd
 3. Implement DynamoDB connection so bot has access to state information
 4. Implement CI/CD
+5. Allow bot to react to Direct, Private and Group Messages she's been invited to.
+6. If sent a request from a Serious Channel. Should not respond in channel. Should send
+   User a Private Message explaning channel rules and that she is not allowed to post there.
 
 # Commands:
 1. Praise @user (has the bot say some nice things about the user)
