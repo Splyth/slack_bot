@@ -203,20 +203,21 @@ def help_command(_query, slack_event):
     dm_id = dm_request['channel']['id']
 
     text = "Known Commands:\n"
-
     for command, info, in commands().items():
         line_text = '`' + command + '` - ' + info['description'] + "\n"
         text = text + line_text
 
-    data = {
-        'channel': dm_id,
-        'text': text
-    }
-
     # Post list of commands to user in direct message
-    request.submit_slack_request(data, 'chat.postMessage')
-    # react to current message with an emoji (CURRENTLY NOT WORKING)
-    # request.submit_slack_request({'name': 'diddy_boom_box'}, 'reactions.add')
+    request.submit_slack_request({'channel': dm_id, 'text': text}, 'chat.postMessage')
+
+    # react to current message with an emoji
+    data = {
+        'name': 'diddy_boom_box',
+        'channel': slack_event["channel"],
+        'timestamp': slack_event['ts'],
+    }
+    request.submit_slack_request(data, 'reactions.add')
+
     return ''
 
 def image_me(query, _slack_event):

@@ -1,9 +1,8 @@
 # Features:
-1. Make Bot Respond to threads
-2. Wish Slack Chat a Happy Birthday on Aug 8th (originally started in 2018)
-3. Bot should wish herself a happy birthday on March 3rd
-4. Implement DynamoDB connection so bot has access to state information
-5. Change `help` command to send a reaction to the message instead of @ the user
+1. Wish Slack Chat a Happy Birthday on Aug 8th (originally started in 2018)
+2. Bot should wish herself a happy birthday on March 3rd
+3. Implement DynamoDB connection so bot has access to state information
+4. Implement CI/CD
 
 # Commands:
 1. Praise @user (has the bot say some nice things about the user)
