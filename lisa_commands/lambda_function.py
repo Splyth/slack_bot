@@ -51,21 +51,19 @@ def valid_slack_request(data):
     Did this request come from slack
     data - the data object (dict)
     """
-    slack_signature = data['headers']['X-Slack-Signature']
-    slack_request_timestamp = data['headers']['X-Slack-Request-Timestamp']
+    slack_signature = data['headers'].get('X-Slack-Signature', ' ')
+    slack_request_timestamp = data['headers'].get('X-Slack-Request-Timestamp', ' ')
     request_body = data['body']
-    basestring = f"v0:{slack_request_timestamp}:{request_body}".encode('utf-8')
+    message = f"v0:{slack_request_timestamp}:{request_body}".encode('utf-8')
 
-    #Make the Signing Secret a bytestring too.
+    # Make the Signing Secret a bytestring too.
     slack_signing_secret = bytes(os.environ["SLACK_SECRET"], 'utf-8')
 
-    #Create a new HMAC "signature", and return the string presentation.
-    my_signature = 'v0=' + hmac.new(slack_signing_secret, basestring, hashlib.sha256).hexdigest()
+    # Create a new HMAC "signature", and return the string presentation.
+    my_signature = 'v0=' + hmac.new(slack_signing_secret, message, hashlib.sha256).hexdigest()
 
-    #Compare the the Slack provided signature to ours.
-    #If they are equal, the request should be verified successfully.
-    #Log the unsuccessful requests for further analysis
-    #(along with another relevant info about the request).
+    # Compare the the Slack provided signature to ours.
+    # If they are equal, the request is legitment
     if hmac.compare_digest(my_signature, slack_signature):
         return True
 

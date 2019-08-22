@@ -49,7 +49,7 @@ A repo where I stash info about how to make a slack bot using aws
 
   @BOT_NAME callthecops - responds with an image of anime cops with the caption "You Called"
 
-  @BOT_NAME kill me - responds with a gif with kill me as a search
+  @BOT_NAME kill me - reacts to user message, kicks user from channel, and sends user a DM with a quote about death
 
   @BOT_USER shame <User ID> - You must @USER_NAME (might figure out how to display with a user name search)
 
@@ -60,17 +60,26 @@ A repo where I stash info about how to make a slack bot using aws
     own feel free to change it in the code or make it configurable
   
 # Environment Variables
-  BOT_TOKEN is the slack apps token more info is (here:)[https://api.slack.com/bot-users]
-  
-  GOOGLE API KEY: You can generate one in the Google API Under Credentials
-  
-  GOOGLE_CUSTOM_SEARCH_KEY: Once you've enabled you Custom Search API check there it's the: Search Engine ID
 
   BING_SUBSCRIPTION_KEY: The Subscription Key from the Azure Account to use
 
   BING_CUSTOM_SEARCH_KEY: The Custom Search Key to use (Create in Azure under Bing Custom image search)
 
+  BOT_ID is the userid of the bot
+
+  BOT_TOKEN is the slack apps token more info is (here:)[https://api.slack.com/bot-users]
+
+  GOOGLE_CUSTOM_SEARCH_KEY: Once you've enabled you Custom Search API check there it's the: Search Engine ID
+
   GIPHY_API_KEY: A Giphey API KEY (here:)[https://developers.giphy.com/docs/api#quick-start-guide]
+
+  GOOGLE API KEY: You can generate one in the Google API Under Credentials
+
+  GOOGLE_CUSTOM_SEARCH_KEY: Genereate a custom search engine in API key should be generated with search engine
+
+  SLACK_SECRET: Under General Information in slack API. Used to ensure bot only responds to requests from slack
+
+  SLACK_USER_TOKEN: User token of the person who made the bot (must have kick user priveldges for certain commands)
 
 # Notes on Google API
   https://cse.google.com/cse/all (In the web form where you create/edit your custom search engine enable "Image search" option and and for "Sites to search" option select "Search the entire web but emphasize included sites")

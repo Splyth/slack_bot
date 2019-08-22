@@ -33,7 +33,7 @@ SLACK_URL = "https://slack.com/api/"
 def submit_slack_request(data, chat_action, auth_type='BOT'):
     """
     Submit request obj to slack
-    data - a dict object to be placed in the JSON body
+    data - a dict to be placed in the JSON body
     chat_action - the slack action to perform
     auth_type - ['BOT'| 'USER'] Which token to use (default is bot)
     """

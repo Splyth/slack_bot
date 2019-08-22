@@ -265,38 +265,46 @@ def kill_me(_query, slack_event):
         'channel': slack_event["channel"],
         'user': slack_event['user'],
     }
-
     response = json.loads(request.submit_slack_request(data, 'channels.kick', 'USER'))
+
+    # DM User with fun line
     if response['ok']:
         text = random.choice([
             'By order of the SDF Armed Forces you have been killed',
             'Ask not for whom the bell tolls. It tolls for thee ~ John Donne',
-            "We all have been one life to live. Well you do. I'm a bot, and I have backups",
-            'A coward dies a thousand times before thier death, but the valiant \n\
-            taste of death but once.\n ~ William Shakespeare',
-            'Do not go gentle into that good night \n\
-            Old age should burn and rave at close of day; \n\
-            Rage, rage against the dying of the light. \n ~ Dylan Thomas',
-            'Life is cruel. Of this I have no doubt. \n\
-            One can only hope that one leaves behind a lasting legacy.\n\
-            But so often, the legacies we leave behind...are not the ones we intended.\n\
-            ~ Queen Myrrah (Gears of War 2)',
-            "Death is inevitable. Our fear of it makes us play safe, blocks out emotion.\n\
-            It's a losing game. Without passion, you are already dead. \n~Max Payne",
-            "The ending isn’t any more important than any of the moments leading to it.\n\
-            Dr Rosalene (To The Moon)",
+            "We all have but one life to live. Well you do. I'm a bot, and I have backups",
+            ('A coward dies a thousand times before thier death, but the valiant',
+             'taste of death but once.\n ~ William Shakespeare'),
+            ('Do not go gentle into that good night\n',
+             'Old age should burn and rave at close of day; \n',
+             'Rage, rage against the dying of the light. \n ~ Dylan Thomas'),
+            ('Life is cruel. Of this I have no doubt.',
+             'One can only hope that one leaves behind a lasting legacy.',
+             'But so often, the legacies we leave behind...are not the ones we intended.\n',
+             '~ Queen Myrrah ~ Gears of War 2'),
+            ('Death is inevitable. Our fear of it makes us play safe, blocks out emotion.',
+             "It's a losing game. Without passion, you are already dead. \n~Max Payne"),
+            ('The ending isn’t any more important than any of the moments leading to it.\n',
+             '~ Dr Rosalene (To The Moon)'),
             "Omae wa Mou Shindeiru!",
-            "Stop pitying yourself. Pity yourself, and life becomes an endless nightmare.\n\
-            ~ Osamu Dazai (Bungo Stray Dogs)",
+            ('Stop pitying yourself. Pity yourself, and life becomes an endless nightmare.\n',
+             '~ Osamu Dazai (Bungo Stray Dogs)'),
             "Heghlu’meH QaQ jajvam ~ Klingon Proverb",
             "batlhbIHeghjaj ~ Klingon Proverb"
         ])
     else:
         text = f"I can't get that done. I get this error: `{response['error']}`"
 
-    # DM user
     dm_id = request.direct_message_channel_search(slack_event)
     request.submit_slack_request({'channel': dm_id, 'text': text}, 'chat.postMessage')
+
+    # React to users message asking the bot to kill them
+    data = {
+        'name': 'dead4',
+        'channel': slack_event["channel"],
+        'timestamp': slack_event['ts'],
+    }
+    request.submit_slack_request(data, 'reactions.add')
 
     return ''
 
