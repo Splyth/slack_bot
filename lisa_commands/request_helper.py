@@ -6,6 +6,7 @@ import os
 import urllib
 import random
 import re
+import base64
 
 # from googlesearch import search_images Need to figure out how to install this
 
@@ -22,6 +23,10 @@ GOOGLE_CUSTOM_SEARCH_KEY = os.environ['GOOGLE_CUSTOM_SEARCH_KEY']
 BING_SUBSCRIPTION_KEY = os.environ['BING_SUBSCRIPTION_KEY']
 # The Custom Search API (uses bing) in Mircorsoft Azure to use
 BING_CUSTOM_SEARCH_KEY = os.environ['BING_CUSTOM_SEARCH_KEY']
+
+# Spotify API Client ID and Secret
+SPOTIFY_CLIENT_ID = os.environ['SPOTIFY_CLIENT_ID']
+SPOTIFY_CLIENT_SECRET = os.environ['SPOTIFY_CLIENT_SECRET']
 
 # Giphy API Key
 GIPHY_API_KEY = os.environ['GIPHY_API_KEY']
@@ -202,6 +207,75 @@ def gify_search(media_type, query):
         return random.choice(response['data'])['images']['original']['url']
 
     return None
+
+def spotify_search(query):
+    """
+    submit a search to spotify
+    :query what type of content we are querying for and the search terms themselves
+    """
+
+    TOKEN_ENDPOINT = 'https://accounts.spotify.com/api/token'
+    SEARCH_ENDPOINT = 'https://api.spotify.com/v1/search'
+    QUERY_TYPES = ['track', 'album', 'artist', 'playlist']
+
+    query_parts = query.split()
+
+    # Pop first part of query off list, this will be the query type
+    query_type = query_parts.pop(0)
+
+    if query_type not in QUERY_TYPES:
+        return 'Invalid Media Type for search. Valid types are "track", "album", "artist" or "playlist"'
+    
+    # The parts of the list that are left will be the search terms
+    search_terms = " ".join(query_parts)
+
+    # First we need to get an access token to do the search request
+
+    token_request = urllib.request.Request(TOKEN_ENDPOINT)
+
+    # Spotify expects an authorization header in the format Base64(client_id:client_secret)
+    authorization = base64.b64encode(bytes(SPOTIFY_CLIENT_ID+':'+SPOTIFY_CLIENT_SECRET, encoding='utf8')).decode('utf-8')
+    
+    token_request.add_header(
+        'Content-Type',
+        'application/x-www-form-urlencoded'
+    )
+    token_request.add_header(
+        'Authorization',
+        f'Basic {authorization}'
+    )
+    token_params = urllib.parse.urlencode({
+        'grant_type': 'client_credentials'
+    }).encode('utf-8')
+
+
+    token_response = urllib.request.urlopen(token_request, data=token_params)
+
+    # OPTIONAL TODO: Could store this token in some sort of cache (Redis or whatever equivalent AWS product) so that we don't need to 
+    # hit the Spotify API for a token everytime
+    access_token = json.load(token_response)['access_token']
+
+    search_params = urllib.parse.urlencode({
+        'q': search_terms,
+        'type': query_type,
+        'limit': 1
+    })
+
+    search_request = urllib.request.Request(SEARCH_ENDPOINT + '?' + search_params)
+    search_request.add_header(
+        'Authorization',
+        f'Bearer {access_token}'
+    )
+    search_data = urllib.request.urlopen(search_request)
+    search_response = json.load(search_data)
+
+    # First property of the JSON response is the query type pluralized, which is why I did this 
+    # monstrosizty of a format string to not have an if statement for each type
+    if len(search_response[f'{query_type}s']['items']) == 0:
+        return 'Could not find anything for that.'
+
+    return search_response[f'{query_type}s']['items'][0]['external_urls']['spotify']
+           
 
 def return_status():
     """

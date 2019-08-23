@@ -110,6 +110,17 @@ def commands():
             'function': youtube_me,
             "description": "use text after command to query youtube"
         },
+        'spotify me': {
+            'function': spotify_me,
+            "description": """
+            Use text after command to query spotify for a song, album, or artist. Must designate 
+            what type you are searching for. 
+            Examples:
+                spotify me track Snow Halation
+                spotify me album The Life of Pablo
+                spotify me artist Streetlight Manifesto
+            """
+        }
     }
 
 def run_command(command, query, slack_event):
@@ -398,3 +409,13 @@ def youtube_me(query, _slack_event):
     Returns a link to youtube video found by search
     """
     return request.youtube_search(query)
+
+def spotify_me(query, slack_event):
+    """
+    query - query str
+    slack_event - A dict of slack event information(unused for this function)
+
+    Returns a link to spotify media item found by search
+    """
+    slack_event['unfurl_media'] = 'true'
+    return request.spotify_search(query)
