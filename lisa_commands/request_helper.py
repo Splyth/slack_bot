@@ -225,7 +225,7 @@ def spotify_search(query):
 
     if query_type not in QUERY_TYPES:
         return 'Invalid Media Type for search. Valid types are "track", "album", "artist" or "playlist"'
-    
+
     # The parts of the list that are left will be the search terms
     search_terms = " ".join(query_parts)
 
@@ -235,7 +235,7 @@ def spotify_search(query):
 
     # Spotify expects an authorization header in the format Base64(client_id:client_secret)
     authorization = base64.b64encode(bytes(SPOTIFY_CLIENT_ID+':'+SPOTIFY_CLIENT_SECRET, encoding='utf8')).decode('utf-8')
-    
+
     token_request.add_header(
         'Content-Type',
         'application/x-www-form-urlencoded'
@@ -251,7 +251,7 @@ def spotify_search(query):
 
     token_response = urllib.request.urlopen(token_request, data=token_params)
 
-    # OPTIONAL TODO: Could store this token in some sort of cache (Redis or whatever equivalent AWS product) so that we don't need to 
+    # OPTIONAL TODO: Could store this token in some sort of cache (Redis or whatever equivalent AWS product) so that we don't need to
     # hit the Spotify API for a token everytime
     access_token = json.load(token_response)['access_token']
 
@@ -269,13 +269,12 @@ def spotify_search(query):
     search_data = urllib.request.urlopen(search_request)
     search_response = json.load(search_data)
 
-    # First property of the JSON response is the query type pluralized, which is why I did this 
+    # First property of the JSON response is the query type pluralized, which is why I did this
     # monstrosizty of a format string to not have an if statement for each type
     if len(search_response[f'{query_type}s']['items']) == 0:
         return 'Could not find anything for that.'
 
     return search_response[f'{query_type}s']['items'][0]['external_urls']['spotify']
-           
 
 def return_status():
     """

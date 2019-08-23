@@ -94,6 +94,17 @@ def commands():
             'function': shame,
             "description": 'shame the text after command'
         },
+        'spotify me': {
+            'function': spotify_me,
+            "description": """
+            Use text after command to query spotify for a song, album, or artist. Must designate
+            what type you are searching for.
+            Examples:
+                spotify me track Snow Halation
+                spotify me album The Life of Pablo
+                spotify me artist Streetlight Manifesto
+            """
+        },
         'sticker me': {
             'function': sticker_me,
             "description": "uses text after command to query giphey for stickers"
@@ -109,17 +120,6 @@ def commands():
         'youtube me': {
             'function': youtube_me,
             "description": "use text after command to query youtube"
-        },
-        'spotify me': {
-            'function': spotify_me,
-            "description": """
-            Use text after command to query spotify for a song, album, or artist. Must designate 
-            what type you are searching for. 
-            Examples:
-                spotify me track Snow Halation
-                spotify me album The Life of Pablo
-                spotify me artist Streetlight Manifesto
-            """
         }
     }
 
@@ -413,7 +413,7 @@ def youtube_me(query, _slack_event):
 def spotify_me(query, slack_event):
     """
     query - query str
-    slack_event - A dict of slack event information(unused for this function)
+    slack_event - A dict of slack event information
 
     Returns a link to spotify media item found by search
     """
