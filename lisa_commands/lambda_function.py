@@ -2,6 +2,10 @@
 Entry point. Called by the AWS lambda service.
 """
 import json
+import hashlib
+import hmac
+import os
+import logging
 from commands import message_text
 import request_helper as request
 
@@ -11,6 +15,8 @@ def lambda_handler(data, _context):
     data: slack request object
     _context: context object from awk
     """
+    if not valid_slack_request(data):
+        return request.return_status()
 
     slack_event = json.loads(data['body'])['event']
 
@@ -39,3 +45,27 @@ def lambda_handler(data, _context):
 
     request.submit_slack_request(data, chat_action)
     return request.return_status()
+
+def valid_slack_request(data):
+    """
+    Did this request come from slack
+    data - the data object (dict)
+    """
+    slack_signature = data['headers'].get('X-Slack-Signature', ' ')
+    slack_request_timestamp = data['headers'].get('X-Slack-Request-Timestamp', ' ')
+    request_body = data['body']
+    message = f"v0:{slack_request_timestamp}:{request_body}".encode('utf-8')
+
+    # Make the Signing Secret a bytestring too.
+    slack_signing_secret = bytes(os.environ["SLACK_SECRET"], 'utf-8')
+
+    # Create a new HMAC "signature", and return the string presentation.
+    my_signature = 'v0=' + hmac.new(slack_signing_secret, message, hashlib.sha256).hexdigest()
+
+    # Compare the the Slack provided signature to ours.
+    # If they are equal, the request is legitment
+    if hmac.compare_digest(my_signature, slack_signature):
+        return True
+
+    logger.warning(f"Verification failed. my_signature: {my_signature}")
+    return False
