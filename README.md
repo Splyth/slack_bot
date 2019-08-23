@@ -37,6 +37,8 @@ A repo where I stash info about how to make a slack bot using aws
 
   @BOT_NAME gif me - use text after command to query giphey for gif
 
+  @BOT_NAME spotify me [track|album|artist|playlist] - use text after command, including one of the media types in brackets, to query spotify for a song, album, artist, or playlist
+
   @BOT_NAME sticker me - use text after command to query giphey for sticker
 
   @BOT_NAME tableflip - responds with a tableflip emoji
