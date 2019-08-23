@@ -31,12 +31,11 @@ def lambda_handler(data, _context):
         # Get the ID of the channel where the message was posted.
         data = {
             'channel': slack_event["channel"],
-            'text': message_text(slack_event)
+            'text': message_text(slack_event),
+            'unfurl_media': 'true'
         }
         if 'thread_ts' in slack_event:
             data['thread_ts'] = slack_event['thread_ts']
-        if 'unfurl_media' in slack_event:
-            data['unfurl_media'] = slack_event['unfurl_media']
     # Currently the emoji that causes the delete logic is 'delet' (Yes it's mispelled)
     elif 'reaction_added' in slack_event['type'] and 'delet' in slack_event["reaction"]:
         chat_action = 'chat.delete'

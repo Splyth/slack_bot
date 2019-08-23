@@ -410,12 +410,11 @@ def youtube_me(query, _slack_event):
     """
     return request.youtube_search(query)
 
-def spotify_me(query, slack_event):
+def spotify_me(query, _slack_event):
     """
     query - query str
     slack_event - A dict of slack event information
 
-    Returns a link to spotify media item found by search
+    Returns a link to spotify media item found by search(unused for this function)
     """
-    slack_event['unfurl_media'] = 'true'
     return request.spotify_search(query)
