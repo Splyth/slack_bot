@@ -31,7 +31,8 @@ def lambda_handler(data, _context):
         # Get the ID of the channel where the message was posted.
         data = {
             'channel': slack_event["channel"],
-            'text': message_text(slack_event)
+            'text': message_text(slack_event),
+            'unfurl_media': 'true'
         }
         if 'thread_ts' in slack_event:
             data['thread_ts'] = slack_event['thread_ts']
