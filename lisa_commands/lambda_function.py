@@ -32,7 +32,8 @@ def lambda_handler(data, _context):
         data = {
             'channel': slack_event["channel"],
             'text': message_text(slack_event),
-            'unfurl_media': 'true'
+            'unfurl_media': 'true',
+            'unfurl_links': 'true'
         }
         if 'thread_ts' in slack_event:
             data['thread_ts'] = slack_event['thread_ts']
@@ -68,5 +69,5 @@ def valid_slack_request(data):
     if hmac.compare_digest(my_signature, slack_signature):
         return True
 
-    logger.warning(f"Verification failed. my_signature: {my_signature}")
+    logging.warning(f"Verification failed. my_signature: {my_signature}")
     return False
