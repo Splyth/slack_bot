@@ -82,6 +82,10 @@ def commands():
             'function': manga_me,
             "description": "use text after command to query anime news network for manga info"
         },
+        'praise': {
+            'function': praise,
+            "description": 'praise the text after command'
+        },
         'put it back': {
             'function': put_it_back,
             "description": "when you are done flipping the table and it's time to clean up"
@@ -327,6 +331,26 @@ def manga_me(query, _slack_event):
     Returns a link to manga series info
     """
     return request.anime_news_network_search('manga', query)
+
+def praise(query, _slack_event):
+    """
+    query - query str
+    slack_event - A dict of slack event information(unused for this function)
+
+    Returns the query with some additional text praising it.
+    """
+
+    user = query.strip().upper()
+    return random.choice([
+        'Great job! ' + user + 'I knew you could do it!',
+        user + ' you have brought honor to your family name.',
+        user + ' it takes a special person to accomplish what you have accomplished.',
+        ':praise_the_sun::praise_the_sun:' + user + ' :praise_the_sun::praise_the_sun:',
+        user + ' :drake_approves:',
+        user + ' :chika-approves:',
+        user + ' :batman-approves:',
+        user + ' you have done well, and you should be proud.'
+    ])
 
 def put_it_back(_query, _slack_event):
     """
