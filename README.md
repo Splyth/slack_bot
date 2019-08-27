@@ -55,6 +55,8 @@ A repo where I stash info about how to make a slack bot using aws
 
   @BOT_USER shame <User ID> - You must @USER_NAME (might figure out how to display with a user name search)
 
+  @BOT_USER praise <User ID> - You must @USER_NAME (might figure out how to display with a user name search)
+
 # Other Bot Interactions:
   ## Delete Bot Message:
     If a bot has posted something you didn't want it to. You can respond with an emoji to have the
