@@ -419,7 +419,7 @@ def youtube_me(query, _slack_event):
 
 def no_result_found_response():
     """
-    Have bot return a response form a list so they feel less canned
+    Have bot return a response from a list so they feel less canned
     """
     return random.choice([
         'Ara ara no results found!... am i saying that right? What does `ara ara` even mean?',
