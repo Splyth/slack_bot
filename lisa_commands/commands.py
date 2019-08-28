@@ -143,9 +143,9 @@ def run_command(command, query, slack_event):
 
     command = command.lower().strip()
     if command in commands().keys():
-        text = commands()[command]['function'](query, slack_event)
+        text = commands()[command]['function'](query.strip(), slack_event)
         if text is None:
-            text = 'Sorry! No results found!'
+            text = no_result_found_response()
         return text
 
     if command and command.strip().count(' ') > 0:
@@ -245,27 +245,25 @@ def image_me(query, _slack_event):
     query - query str(unused for this function)
     slack_event - A dict of slack event information
 
-    Returns an image link (with optional caption)
+    Returns an image link (with optional caption) or None
     """
 
+    search_engines = {'google':request.google_image_search, 'bing': request.bing_image_search}
+
+    # If user specified a search engine (e.g. from google) use that search engine
     split = query.rsplit(' ', 2)
-    # If the user added 'from google' or 'from bing' to end of command
-    # use that engine.
     if len(split) > 1 and split[1].lower() == 'from':
-        text = None
-        if split[2].lower() == 'google':
-            text = request.google_image_search(query)
-        elif split[2].lower() == 'bing':
-            text = request.bing_image_search(query)
+        search_engine = split[2].lower()
+        if search_engines.get(search_engine):
+            return search_engines[search_engine](query)
 
-        text = 'Sorry no results found.' if text is None else text
+    # Else random choice
+    search_engine = random.choice(list(search_engines.keys()))
 
-        return text
-    # If the user didn't specify a search engine we just pick one
-    search_engine = random.choice(['google', 'bing'])
-    if search_engine == 'google':
-        return "From Google: " + request.google_image_search(query)
-    return "From Bing: " + request.bing_image_search(query)
+    img_link = search_engines[search_engine](query)
+    if img_link:
+        return f'From {search_engine.capitalize()}: {img_link}'
+    return None
 
 def kill_me(_query, slack_event):
     """
@@ -288,16 +286,16 @@ def kill_me(_query, slack_event):
             'By order of the SDF Armed Forces you have been killed',
             'Ask not for whom the bell tolls. It tolls for thee ~ John Donne',
             "We all have but one life to live. Well you do. I'm a bot, and I have backups",
-            ('A coward dies a thousand times before thier death, but the valiant',
+            ('A coward dies a thousand times before thier death, but the valiant '
              'taste of death but once.\n ~ William Shakespeare'),
-            ('Do not go gentle into that good night\n',
-             'Old age should burn and rave at close of day; \n',
+            ('Do not go gentle into that good night\n'
+             'Old age should burn and rave at close of day; \n'
              'Rage, rage against the dying of the light. \n ~ Dylan Thomas'),
-            ('Life is cruel. Of this I have no doubt.',
-             'One can only hope that one leaves behind a lasting legacy.',
-             'But so often, the legacies we leave behind...are not the ones we intended.\n',
+            ('Life is cruel. Of this I have no doubt. '
+             'One can only hope that one leaves behind a lasting legacy. '
+             'But so often, the legacies we leave behind...are not the ones we intended.\n'
              '~ Queen Myrrah ~ Gears of War 2'),
-            ('Death is inevitable. Our fear of it makes us play safe, blocks out emotion.',
+            ('Death is inevitable. Our fear of it makes us play safe, blocks out emotion. '
              "It's a losing game. Without passion, you are already dead. \n~Max Payne"),
             ('The ending isn’t any more important than any of the moments leading to it.\n',
              '~ Dr Rosalene (To The Moon)'),
@@ -388,6 +386,15 @@ def shame(query, _slack_event):
         user + ' you did bad and you should feel bad',
         user + ' :smh:',
     ])
+    
+def spotify_me(query, _slack_event):
+    """
+    query - query str
+    slack_event - A dict of slack event information(unused for this function)
+
+    Returns a link to spotify media item found by search
+    """
+    return request.spotify_search(query)
 
 def sticker_me(query, _slack_event):
     """
@@ -434,11 +441,28 @@ def youtube_me(query, _slack_event):
     """
     return request.youtube_search(query)
 
-def spotify_me(query, _slack_event):
+def no_result_found_response():
     """
-    query - query str
-    slack_event - A dict of slack event information(unused for this function)
-
-    Returns a link to spotify media item found by search
+    Have bot return a response from a list so they feel less canned
     """
-    return request.spotify_search(query)
+    return random.choice([
+        'Ara ara no results found!... am i saying that right? What does `ara ara` even mean?',
+        "I didn't find anything for that one",
+        "Hmmm, maybe try rephrasing that search",
+        "My search-fu failed me."
+        "No dice. It's hard looking things up from a battleship in space!",
+        "You search for some funny things! But I got nothing for this one.",
+        "I don't like giving up but :sigh: I'm giving up. Try a different search",
+        "Hmm, Nope. Nothing. Maybe try that again with some different keywords.",
+        ('I can helm a battleship, command squadrons of fighters, pilot recon craft '
+          "fight an alien army bent on destroying the earth. But I can't find any results for "
+          "this search"),
+        "I came, I searched... and got nothing.",
+        "Y'know I consider myself pretty smart but this search has me stumped.",
+        ('Unless this is some sort of zen riddle where the answer lies inside you '
+         'I got nothing.'),
+        'I searched for what you asked and got a big angry :no: from the internet.',
+        "This search must be hipster because I've never heard of it.",
+        ("I've seen the vast expaneses of space, gazed into the abyss of a warp, "
+         "and all of that pales in comparison to the emptiness of these search results"),
+    ])

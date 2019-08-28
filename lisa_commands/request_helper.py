@@ -7,7 +7,7 @@ import urllib
 import random
 import re
 import base64
-
+import logging
 # from googlesearch import search_images Need to figure out how to install this
 
 # Bot OAuth token from the environment.
@@ -153,7 +153,8 @@ def youtube_search(query):
     request.add_header("Content-Type", "application/json")
     data = json.loads(urllib.request.urlopen(request).read())
 
-    if 'items' in data:
+    logging.warning(data)
+    if data.get('items'):
         video_id = random.choice(data["items"])["id"]["videoId"]
         return f"https://www.youtube.com/watch?v={video_id}"
 
@@ -175,10 +176,12 @@ def wikipedia_search(query):
 
     data = json.loads(urllib.request.urlopen(request).read())
 
-    if 'query' in data:
-        wikipedia_title = data['query']['search'][0]['title']
-        link_title = '_'.join(wikipedia_title.split())
-        return f"https://en.wikipedia.org/wiki/{link_title}"
+    logging.warning(data)
+    if data['query']:
+        if data['query']['search']:
+            wikipedia_title = data['query']['search'][0]['title']
+            link_title = '_'.join(wikipedia_title.split())
+            return f"https://en.wikipedia.org/wiki/{link_title}"
 
     return None
 
@@ -214,67 +217,37 @@ def spotify_search(query):
     :query what type of content we are querying for and the search terms themselves
     """
 
-    TOKEN_ENDPOINT = 'https://accounts.spotify.com/api/token'
-    SEARCH_ENDPOINT = 'https://api.spotify.com/v1/search'
-    QUERY_TYPES = ['track', 'album', 'artist', 'playlist']
+    query_types = ['track', 'album', 'artist', 'playlist']
+    query_type, search_query = query.split(' ', 1)
 
-    query_parts = query.split()
-
-    # Pop first part of query off list, this will be the query type
-    query_type = query_parts.pop(0)
-
-    if query_type not in QUERY_TYPES:
-        return 'Invalid Media Type for search. Valid types are "track", "album", "artist" or "playlist"'
-
-    # The parts of the list that are left will be the search terms
-    search_terms = " ".join(query_parts)
-
-    # First we need to get an access token to do the search request
-
-    token_request = urllib.request.Request(TOKEN_ENDPOINT)
-
-    # Spotify expects an authorization header in the format Base64(client_id:client_secret)
-    authorization = base64.b64encode(bytes(SPOTIFY_CLIENT_ID+':'+SPOTIFY_CLIENT_SECRET, encoding='utf8')).decode('utf-8')
-
-    token_request.add_header(
-        'Content-Type',
-        'application/x-www-form-urlencoded'
-    )
-    token_request.add_header(
-        'Authorization',
-        f'Basic {authorization}'
-    )
-    token_params = urllib.parse.urlencode({
-        'grant_type': 'client_credentials'
-    }).encode('utf-8')
-
-
-    token_response = urllib.request.urlopen(token_request, data=token_params)
-
-    # OPTIONAL TODO: Could store this token in some sort of cache (Redis or whatever equivalent AWS product) so that we don't need to
-    # hit the Spotify API for a token everytime
-    access_token = json.load(token_response)['access_token']
+    if query_type not in query_types:
+        return f'Invalid Media Type for search. Valid types are { " ".join(query_types) }'
 
     search_params = urllib.parse.urlencode({
-        'q': search_terms,
+        'q': search_query,
         'type': query_type,
         'limit': 1
     })
 
-    search_request = urllib.request.Request(SEARCH_ENDPOINT + '?' + search_params)
+    search_request = urllib.request.Request(
+        'https://api.spotify.com/v1/search' + '?' + search_params
+    )
     search_request.add_header(
         'Authorization',
-        f'Bearer {access_token}'
+        f'Bearer {spotify_token()}'
     )
-    search_data = urllib.request.urlopen(search_request)
-    search_response = json.load(search_data)
+
+    # Submit search request
+    search_response = json.load(urllib.request.urlopen(search_request))
 
     # First property of the JSON response is the query type pluralized, which is why I did this
     # monstrosizty of a format string to not have an if statement for each type
-    if len(search_response[f'{query_type}s']['items']) == 0:
-        return 'Could not find anything for that.'
+    if search_response[f'{query_type}s']['items']:
+        return search_response[f'{query_type}s']['items'][0]['external_urls']['spotify']
 
-    return search_response[f'{query_type}s']['items'][0]['external_urls']['spotify']
+    return None
+
+
 
 def return_status():
     """
@@ -286,3 +259,35 @@ def return_status():
         'statusCode': 200,
         'body':'no worries',
     }
+
+## HELPER FUNCTIONS
+def spotify_token():
+    """
+    Handles getting the access token to authenticate to spotify
+    """
+
+    # First we need to get an access token to do the search request
+    token_request = urllib.request.Request('https://accounts.spotify.com/api/token')
+
+    token_request.add_header(
+        'Content-Type',
+        'application/x-www-form-urlencoded'
+    )
+
+    # Spotify expects an authorization header in the format Base64(client_id:client_secret)
+    authorization = base64.b64encode(
+        bytes(SPOTIFY_CLIENT_ID+':'+SPOTIFY_CLIENT_SECRET, encoding='utf8')
+    ).decode('utf-8')
+
+    token_request.add_header(
+        'Authorization',
+        f'Basic {authorization}'
+    )
+    token_params = urllib.parse.urlencode({
+        'grant_type': 'client_credentials'
+    }).encode('utf-8')
+
+    # TODO: Should cache this token (use Redis or equivalent AWS product)
+    return json.load(
+        urllib.request.urlopen(token_request, data=token_params)
+    )['access_token']
