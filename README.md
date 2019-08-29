@@ -1,22 +1,22 @@
 # slack_bot
-A repo where I stash info about how to make a slack bot using aws
+A repo containing the code for a slack bot using an AWS lambda instance.
 
 # Requirements
-  (AWS Account)[https://aws.amazon.com/console/]
+  [AWS Account](https://aws.amazon.com/console/)
   
   Python 3.6 Runtime (Select once you have your lamabda function environment and API Gateway created)
   
-  (Google Account)[https://console.developers.google.com]
-  
+  [Google Account](https://console.developers.google.com)
   Google Custom Search API Enabled: Once your Google API Account is made enable "Custom Search API" for your project
   
-  (Azure Account)[https://azure.microsoft.com/en-us/account/]
-
+  [Azure Account](https://azure.microsoft.com/en-us/account/)
   Azure Custom Search API Enabled: Once your Microsoft Azure account is made enable "Custom Search API" for your project
   
-  Giphy Access: https://developers.giphy.com/ 
-  
-  SLACK App API Access
+  [Giphy Access](https://developers.giphy.com/)
+
+  [Spotify Access](https://developer.spotify.com/documentation/web-api/quick-start/)
+
+  [Slack App API Access](https://api.slack.com/)
   
 # Invoke
   Once running the bot knows the following commands
@@ -41,15 +41,15 @@ A repo where I stash info about how to make a slack bot using aws
 
   @BOT_NAME sticker me - use text after command to query giphey for sticker
 
-  @BOT_NAME tableflip - responds with a tableflip emoji
+  @BOT_NAME table flip - responds with a tableflip emoji
 
-  @BOT_NAME putitback - responds with a reversetableflip emoji
+  @BOT_NAME put it back - responds with a reversetableflip emoji
 
-  @BOT_NAME flipcoin - responds with either head or tails
+  @BOT_NAME flip coin - responds with either head or tails
 
   @BOT_NAME decide - responds randomly with one of the words after this command
 
-  @BOT_NAME callthecops - responds with an image of anime cops with the caption "You Called"
+  @BOT_NAME call the cops - responds with an image of anime cops with the caption "You Called"
 
   @BOT_NAME kill me - reacts to user message, kicks user from channel, and sends user a DM with a quote about death
 
@@ -71,11 +71,11 @@ A repo where I stash info about how to make a slack bot using aws
 
   BOT_ID is the userid of the bot
 
-  BOT_TOKEN is the slack apps token more info is (here:)[https://api.slack.com/bot-users]
+  BOT_TOKEN is the slack apps token more info is [here:](https://api.slack.com/bot-users)
 
   GOOGLE_CUSTOM_SEARCH_KEY: Once you've enabled you Custom Search API check there it's the: Search Engine ID
 
-  GIPHY_API_KEY: A Giphey API KEY (here:)[https://developers.giphy.com/docs/api#quick-start-guide]
+  GIPHY_API_KEY: A Giphey API KEY [here](https://developers.giphy.com/docs/api#quick-start-guide)
 
   GOOGLE API KEY: You can generate one in the Google API Under Credentials
 
@@ -84,6 +84,10 @@ A repo where I stash info about how to make a slack bot using aws
   SLACK_SECRET: Under General Information in slack API. Used to ensure bot only responds to requests from slack
 
   SLACK_USER_TOKEN: User token of the person who made the bot (must have kick user priveldges for certain commands)
+
+  SPOTIFY_CLIENT_ID: Client ID for Spotify (check the spotify docs in the requirements section)
+
+  SPOTIFY_CLIENT_SECRET: Client Secret for Spotify (check the spotify docs in the requirements section)
 
 # Notes on Google API
   https://cse.google.com/cse/all (In the web form where you create/edit your custom search engine enable "Image search" option and and for "Sites to search" option select "Search the entire web but emphasize included sites")
@@ -139,5 +143,5 @@ A repo where I stash info about how to make a slack bot using aws
   on it. You see that cool diagram that just showed up? See the `Test` button click it. Select `Post` from the drop down box and copy that JSON I gave up above and click `Test` It will output the log of the Cloud API Gateway trying to hit your currently saved lambda function (NOTE Not the the DEPLOYED one the one you have saved) Saved is either the same or newer that deployed
 
   ## Deploying your function:
-  So until it's deployed no one is gonna be able to use it. Slack can't call it. So just click on the `Actions` button and `Deploy API`
+  Until it's deployed no one is gonna be able to use it. Slack can't call it. So just click on the `Actions` button and `Deploy API`
   and that should deploy your app and now people can hit it.
