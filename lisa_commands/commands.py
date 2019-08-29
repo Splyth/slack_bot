@@ -31,7 +31,7 @@ def parse_mention(text):
 
     matches = re.search("^<@(|[WU].+?)>(.*)", text)
     # the first group contains the username, the second group contains the remaining message
-    return (matches.group(1), matches.group(2).strip().lower()) if matches else (None, None)
+    return (matches.group(1), matches.group(2).strip()) if matches else (None, None)
 
 def commands():
     """
@@ -141,14 +141,14 @@ def run_command(command, query, slack_event):
     Returns the message text to send back to slack
     """
 
-    command = command.lower().strip()
-    if command in commands().keys():
-        text = commands()[command]['function'](query.strip(), slack_event)
+    check_command = command.lower().strip()
+    if check_command in commands().keys():
+        text = commands()[check_command]['function'](query.strip(), slack_event)
         if text is None:
             text = no_result_found_response()
         return text
 
-    if command and command.strip().count(' ') > 0:
+    if check_command and check_command.strip().count(' ') > 0:
         command, query_word = command.rsplit(' ', 1)
         return run_command(command, query_word + ' ' + query, slack_event)
 
@@ -386,7 +386,7 @@ def shame(query, _slack_event):
         user + ' you did bad and you should feel bad',
         user + ' :smh:',
     ])
-    
+
 def spotify_me(query, _slack_event):
     """
     query - query str
@@ -455,8 +455,8 @@ def no_result_found_response():
         "I don't like giving up but :sigh: I'm giving up. Try a different search",
         "Hmm, Nope. Nothing. Maybe try that again with some different keywords.",
         ('I can helm a battleship, command squadrons of fighters, pilot recon craft '
-          "fight an alien army bent on destroying the earth. But I can't find any results for "
-          "this search"),
+         "fight an alien army bent on destroying the earth. But I can't find any results for "
+         "this search"),
         "I came, I searched... and got nothing.",
         "Y'know I consider myself pretty smart but this search has me stumped.",
         ('Unless this is some sort of zen riddle where the answer lies inside you '
