@@ -147,7 +147,8 @@ def youtube_search(query):
         'part': 'snippet',
         'q': query,
         'key': GOOGLE_API_KEY,
-        'maxResults': 1
+        'maxResults': 1,
+        'type': 'video'
     })
     request = urllib.request.Request("https://www.googleapis.com/youtube/v3/search?" + params)
     request.add_header("Content-Type", "application/json")
