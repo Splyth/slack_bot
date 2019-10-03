@@ -103,7 +103,7 @@ def google_image_search(query):
         'q': query,
         'key': GOOGLE_API_KEY,
         'cx': GOOGLE_CUSTOM_SEARCH_KEY,
-        'num': 10
+        'num': 5
     })
     data = json.loads(
         urllib.request.urlopen("https://www.googleapis.com/customsearch/v1?" + params).read()
@@ -120,7 +120,7 @@ def bing_image_search(query):
     """
     params = urllib.parse.urlencode({
         'q': query,
-        'count': 10,
+        'count': 5,
         'mkt': 'en-US',
         'customconfig': BING_CUSTOM_SEARCH_KEY
     })
@@ -147,7 +147,7 @@ def youtube_search(query):
         'part': 'snippet',
         'q': query,
         'key': GOOGLE_API_KEY,
-        'maxResults': 10
+        'maxResults': 3
     })
     request = urllib.request.Request("https://www.googleapis.com/youtube/v3/search?" + params)
     request.add_header("Content-Type", "application/json")
@@ -192,7 +192,7 @@ def gify_search(media_type, query):
     :query what to query for
     """
 
-    limit = 10
+    limit = 3
     request_params = urllib.parse.urlencode({
         'api_key': GIPHY_API_KEY,
         'limit': limit,
