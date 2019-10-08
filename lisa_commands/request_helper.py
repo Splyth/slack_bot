@@ -41,7 +41,6 @@ def submit_slack_request(data, chat_action, auth_type='BOT'):
     Submit request obj to slack
     data - a dict to be placed in the JSON body
     chat_action - the slack action to perform
-    header_type - the header type to use (default is 'appplication/json')
     auth_type - ['BOT'| 'USER'] Which token to use (default is bot)
     """
     # Construct the HTTP request that will be sent to the Slack API.
