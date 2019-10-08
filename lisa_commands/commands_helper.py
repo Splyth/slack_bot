@@ -15,7 +15,7 @@ def karma_requested_for(query, slack_event):
     returns one of the following: self, bot, or other
     """
 
-    if query in ['ME', query == '<@'+slack_event['user']+'>']:
+    if query in ['ME', '<@'+slack_event['user']+'>']:
         return 'self'
     if query == '<@'+request.dynamodb_query('bot_id', {'id':{'S': '1'}})['Item']['bot_id']['S']+'>':
         return 'bot'
