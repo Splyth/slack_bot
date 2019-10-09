@@ -84,9 +84,13 @@ def commands():
             'function': manga_me,
             "description": "use text after command to query anime news network for manga info"
         },
+        'my karma': {
+            'function': my_karma,
+            "description": "Shows user their karma"
+        },
         'praise': {
             'function': praise,
-            "description": 'praise the text after command'
+            "description": 'praise the text after command and adds karma'
         },
         'put it back': {
             'function': put_it_back,
@@ -98,7 +102,7 @@ def commands():
         },
         'shame': {
             'function': shame,
-            "description": 'shame the text after command'
+            "description": 'shame the text after commandand removes karma'
         },
         'spotify me': {
             'function': spotify_me,
@@ -332,6 +336,25 @@ def manga_me(query, _slack_event):
     """
     return request.anime_news_network_search('manga', query)
 
+def my_karma(_query, slack_event):
+    """
+    _query - query str (unused for this function)
+    slack_event - A dict of slack event information(unused for this function)
+
+    Returns the users karma:
+    """
+    text = random.choice([
+        'Sure thing! Your karma is: ',
+        "Let's see. Your current karma is: ",
+        'I have your karma at: ',
+        "Looks like your karma is: ",
+    ])
+
+    return text + request.dynamodb_query(
+        'karma_scores',
+        {'user': {'S': '<@' + slack_event['user'] + '>'}}
+    )['Item']['karma']['N']
+    
 def praise(query, slack_event):
     """
     query - query str
