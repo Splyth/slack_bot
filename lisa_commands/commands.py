@@ -6,6 +6,8 @@ then gets the string to pass back to slack
 import random
 import re
 import json
+import logging
+import commands_helper
 import request_helper as request
 
 def message_text(slack_event):
@@ -82,9 +84,13 @@ def commands():
             'function': manga_me,
             "description": "use text after command to query anime news network for manga info"
         },
+        'my karma': {
+            'function': my_karma,
+            "description": "Shows user their karma"
+        },
         'praise': {
             'function': praise,
-            "description": 'praise the text after command'
+            "description": 'praise the text after command and adds karma'
         },
         'put it back': {
             'function': put_it_back,
@@ -96,7 +102,7 @@ def commands():
         },
         'shame': {
             'function': shame,
-            "description": 'shame the text after command'
+            "description": 'shame the text after command and removes karma'
         },
         'spotify me': {
             'function': spotify_me,
@@ -286,7 +292,7 @@ def kill_me(_query, slack_event):
             'By order of the SDF Armed Forces you have been killed',
             'Ask not for whom the bell tolls. It tolls for thee ~ John Donne',
             "We all have but one life to live. Well you do. I'm a bot, and I have backups",
-            ('A coward dies a thousand times before thier death, but the valiant '
+            ('A coward dies a thousand times before their death, but the valiant '
              'taste of death but once.\n ~ William Shakespeare'),
             ('Do not go gentle into that good night\n'
              'Old age should burn and rave at close of day; \n'
@@ -297,10 +303,10 @@ def kill_me(_query, slack_event):
              '~ Queen Myrrah ~ Gears of War 2'),
             ('Death is inevitable. Our fear of it makes us play safe, blocks out emotion. '
              "It's a losing game. Without passion, you are already dead. \n~Max Payne"),
-            ('The ending isn’t any more important than any of the moments leading to it.\n',
+            ('The ending isn’t any more important than any of the moments leading to it.\n'
              '~ Dr Rosalene (To The Moon)'),
             "Omae wa Mou Shindeiru!",
-            ('Stop pitying yourself. Pity yourself, and life becomes an endless nightmare.\n',
+            ('Stop pitying yourself. Pity yourself, and life becomes an endless nightmare.\n'
              '~ Osamu Dazai (Bungo Stray Dogs)'),
             "Heghlu’meH QaQ jajvam ~ Klingon Proverb",
             "batlhbIHeghjaj ~ Klingon Proverb"
@@ -330,25 +336,83 @@ def manga_me(query, _slack_event):
     """
     return request.anime_news_network_search('manga', query)
 
-def praise(query, _slack_event):
+def my_karma(_query, slack_event):
+    """
+    _query - query str (unused for this function)
+    slack_event - A dict of slack event information(unused for this function)
+
+    Returns the users karma:
+    """
+    text = random.choice([
+        'Sure thing! Your karma is: ',
+        "Let's see. Your current karma is: ",
+        'I have your karma at: ',
+        "Looks like your karma is: ",
+    ])
+
+    return text + request.dynamodb_query(
+        'karma_scores',
+        {'user': {'S': '<@' + slack_event['user'] + '>'}}
+    )['Item']['karma']['N']
+    
+def praise(query, slack_event):
     """
     query - query str
-    slack_event - A dict of slack event information(unused for this function)
+    slack_event - A dict of slack event information
 
     Returns the query with some additional text praising it.
     """
 
-    user = query.strip().upper()
-    return random.choice([
-        'Great job! ' + user + 'I knew you could do it!',
-        user + ' you have brought honor to your family name.',
-        user + ' it takes a special person to accomplish what you have accomplished.',
-        ':praise_the_sun::praise_the_sun:' + user + ' :praise_the_sun::praise_the_sun:',
-        user + ' :drake_approves:',
-        user + ' :chika-approves:',
-        user + ' :batman-approves:',
-        user + ' you have done well, and you should be proud.'
-    ])
+    query = query.strip().upper()
+    requested_for = commands_helper.karma_requested_for(query, slack_event)
+
+    if requested_for == 'self':
+        user = '<@' + slack_event['user'] + '>'
+        return random.choice([
+            user + " Isn't that a little like high fiving yourself?",
+            user + ' That seems a little narcissistic...',
+            user + " I don't really like doing that.",
+            user + " I'm an XO on a space battleship, Who really deservers praise here?",
+            user + " Do something someone else thinks worthy of praise and we'll talk",
+        ])
+
+    request.dynamodb_update(
+        'karma_scores',
+        {'user':{'S':query}},
+        'ADD karma :val',
+        {':val':{'N':'1'}}
+    )
+
+    if requested_for == 'bot':
+        user = '<@' + slack_event['user'] + '>'
+        text = random.choice([
+            user + " Thanks! That's so nice of you to say",
+            user + ' Aww thanks!',
+            user + ':blobblush:',
+            user + ":02blush: That's kind of you!",
+            user + "Oh, you! :meowblush:"
+        ])
+
+        text = text + '\n' +' My Karma is now: '
+
+    else:
+        user = query
+        text = random.choice([
+            'Great job! ' + user + 'I knew you could do it!',
+            user + ' you have brought honor to your family name.',
+            user + ' it takes a special person to accomplish what you have accomplished.',
+            ':praise_the_sun::praise_the_sun:' + user + ' :praise_the_sun::praise_the_sun:',
+            user + ' :drake_approves:',
+            user + ' :chika-approves:',
+            user + ' :batman-approves:',
+            user + ' you have done well, and you should be proud.'
+        ])
+
+        text = text + '\n' + user + ' Your Karma is now: '
+    return text + request.dynamodb_query(
+        'karma_scores',
+        {'user': {'S': query}}
+    )['Item']['karma']['N']
 
 def put_it_back(_query, _slack_event):
     """
@@ -368,24 +432,72 @@ def reverse_me(query, _slack_event):
     """
     return query[::-1]
 
-def shame(query, _slack_event):
+def shame(query, slack_event):
     """
     query - query str
-    slack_event - A dict of slack event information(unused for this function)
+    slack_event - A dict of slack event information
 
     Returns the query with some additional text shaming it.
     """
 
-    user = query.strip().upper()
-    return random.choice([
-        'Shame on you! ' + user + 'You should know better!',
-        user + ' ಠ_ಠ',
-        user + ' You have made a mockery of yourself. Turn in your weeabo credentials!',
-        user + ' :blobdisapproval:',
-        user + ' :disappoint:',
-        user + ' you did bad and you should feel bad',
-        user + ' :smh:',
-    ])
+    query = query.strip().upper()
+    requested_for = commands_helper.karma_requested_for(query, slack_event)
+
+    if requested_for == 'self':
+        user = '<@' + slack_event['user'] + '>'
+        return random.choice([
+            user + " You shouldn't be so hard on yourself :ganbatte:",
+            user + " :02pat: There there I'm sure it'll get better",
+            user + " :meowhug: It's not so bad I pronise things will get better.",
+            ("```\nWhat though life conspire to cheat you,\n"
+             "Do not sorrow or complain.\n"
+             "Lie still on the day of pain,\n\n"
+             "And the day of joy will greet you.\n"
+             "Hearts live in the coming day.\n"
+             "There's an end to passing sorrow.\n\n"
+             "Suddenly all flies away,\n"
+             "And delight returns tomorrow.\n"
+             "~ A.S. Pushkin\n```"),
+            (user + " Life is not always a matter of holding good cards,"
+             "but sometimes, playing a poor hand well ~ Jack London"),
+        ])
+
+    request.dynamodb_update(
+        'karma_scores',
+        {'user':{'S':query}},
+        'ADD karma :val',
+        {':val':{'N':'-1'}}
+    )
+
+    if requested_for == 'bot':
+        user = '<@' + slack_event['user'] + '>'
+        text = random.choice([
+            user + " I'm sorry I've offended you so :bow:",
+            user + ' Failure is not the end, I will endeavor to do better',
+            user + ':sorry: I sincerely apologize! :bow: ',
+            user + "You learn more from defeat. Still doesn't make it hurt any less. :sad:",
+            user + ":sadlute:"
+        ])
+
+        text = text + '\n' +' My Karma is now: '
+
+    else:
+        user = query
+        text = random.choice([
+            'Shame on you! ' + user + 'You should know better!',
+            user + ' ಠ_ಠ',
+            user + ' You have made a mockery of yourself. Turn in your weeabo credentials!',
+            user + ' :blobdisapproval:',
+            user + ' :disappoint:',
+            user + ' you did bad and you should feel bad',
+            user + ' :smh:',
+        ])
+        text = text + '\n' + user + ' Your Karma is now: '
+
+    return text + request.dynamodb_query(
+        'karma_scores',
+        {'user': {'S': query}}
+    )['Item']['karma']['N']
 
 def spotify_me(query, _slack_event):
     """
@@ -439,6 +551,7 @@ def youtube_me(query, _slack_event):
 
     Returns a link to youtube video found by search
     """
+
     return request.youtube_search(query)
 
 def no_result_found_response():
@@ -461,7 +574,7 @@ def no_result_found_response():
         "Y'know I consider myself pretty smart but this search has me stumped.",
         ('Unless this is some sort of zen riddle where the answer lies inside you '
          'I got nothing.'),
-        'I searched for what you asked and got a big angry :no: from the internet.',
+        'I searched for what you asked for and got a big angry :no: from the internet.',
         "This search must be hipster because I've never heard of it.",
         ("I've seen the vast expaneses of space, gazed into the abyss of a warp, "
          "and all of that pales in comparison to the emptiness of these search results"),

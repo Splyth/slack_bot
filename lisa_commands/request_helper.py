@@ -8,6 +8,7 @@ import random
 import re
 import base64
 import logging
+import boto3
 # from googlesearch import search_images Need to figure out how to install this
 
 # Bot OAuth token from the environment.
@@ -154,7 +155,6 @@ def youtube_search(query):
     request.add_header("Content-Type", "application/json")
     data = json.loads(urllib.request.urlopen(request).read())
 
-    logging.warning(data)
     if data.get('items'):
         video_id = data["items"][0]["id"]["videoId"]
         return f"https://www.youtube.com/watch?v={video_id}"
@@ -260,6 +260,52 @@ def return_status():
         'statusCode': 200,
         'body':'no worries',
     }
+
+def dynamodb_update(table, keys, update_expression, expression_values):
+    """
+    Updates a Dynamodb Item
+
+    table - The table name (string)
+    keys - The keys of the item we are to update (dict)
+    update_expression - The sql statement we want to preform (string)
+    expression_values - The subbed in values to the update expression (dict)
+
+    Example:
+        dynamodb_update(
+            'my_table',
+            {'user': {'S': 'Rick Hunter'}},
+            'SET karma = karma + :val',
+            {':val': {'N': '1'} }
+        )
+
+    Returns Nothing
+    """
+    dynamodb = boto3.client('dynamodb')
+    dynamodb.update_item(
+        TableName=table,
+        Key=keys,
+        UpdateExpression=update_expression,
+        ExpressionAttributeValues=expression_values)
+
+def dynamodb_query(table, keys):
+    """
+    Queries a Dynamodb Item
+
+    table - The table name (string)
+    keys - The keys of the item we are to update (dict)
+
+    Example:
+        dynamodb_update(
+            'my_table',
+            {'user': {'S': 'Rick Hunter'}}
+        )
+        #=> {'Item': {...}}
+
+    Returns a dict
+    """
+
+    dynamodb = boto3.client('dynamodb')
+    return dynamodb.get_item(TableName=table, Key=keys)
 
 ## HELPER FUNCTIONS
 def spotify_token():

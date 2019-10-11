@@ -6,6 +6,7 @@ A repo containing the code for a slack bot using an AWS lambda instance.
   
   Python 3.6 Runtime (Select once you have your lamabda function environment and API Gateway created)
   
+  [DynamoDB](https://aws.amazon.com/dynamodb/) Tables: [bot_id: [id = 1, BOT_ID], karma_scores: [user, karma]]
   [Google Account](https://console.developers.google.com)
   Google Custom Search API Enabled: Once your Google API Account is made enable "Custom Search API" for your project
   
@@ -68,8 +69,6 @@ A repo containing the code for a slack bot using an AWS lambda instance.
   BING_SUBSCRIPTION_KEY: The Subscription Key from the Azure Account to use
 
   BING_CUSTOM_SEARCH_KEY: The Custom Search Key to use (Create in Azure under Bing Custom image search)
-
-  BOT_ID is the userid of the bot
 
   BOT_TOKEN is the slack apps token more info is [here:](https://api.slack.com/bot-users)
 
