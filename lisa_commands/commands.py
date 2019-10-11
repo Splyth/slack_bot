@@ -358,7 +358,7 @@ def my_karma(_query, slack_event):
 def praise(query, slack_event):
     """
     query - query str
-    slack_event - A dict of slack event information(unused for this function)
+    slack_event - A dict of slack event information
 
     Returns the query with some additional text praising it.
     """
