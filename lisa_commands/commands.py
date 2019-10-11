@@ -102,7 +102,7 @@ def commands():
         },
         'shame': {
             'function': shame,
-            "description": 'shame the text after commandand removes karma'
+            "description": 'shame the text after command and removes karma'
         },
         'spotify me': {
             'function': spotify_me,
