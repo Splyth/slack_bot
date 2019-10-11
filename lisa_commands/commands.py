@@ -435,7 +435,7 @@ def reverse_me(query, _slack_event):
 def shame(query, slack_event):
     """
     query - query str
-    slack_event - A dict of slack event information(unused for this function)
+    slack_event - A dict of slack event information
 
     Returns the query with some additional text shaming it.
     """
