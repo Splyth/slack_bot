@@ -388,9 +388,9 @@ def praise(query, slack_event):
         text = random.choice([
             user + " Thanks! That's so nice of you to say",
             user + ' Aww thanks!',
-            user + ':blobblush:',
-            user + ":02blush: That's kind of you!",
-            user + "Oh, you! :meowblush:"
+            user + ' :blobblush:',
+            user + ' :02blush: That's kind of you!',
+            user + ' Oh, you! :meowblush:'
         ])
 
         text = text + '\n' +' My Karma is now: '
