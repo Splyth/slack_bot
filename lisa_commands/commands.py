@@ -398,7 +398,7 @@ def praise(query, slack_event):
     else:
         user = query
         text = random.choice([
-            'Great job! ' + user + 'I knew you could do it!',
+            'Great job! ' + user + ' I knew you could do it!',
             user + ' you have brought honor to your family name.',
             user + ' it takes a special person to accomplish what you have accomplished.',
             ':praise_the_sun::praise_the_sun:' + user + ' :praise_the_sun::praise_the_sun:',
