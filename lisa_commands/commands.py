@@ -57,7 +57,7 @@ def commands():
         },
         'flip coin': {
             'function': flip_coin,
-            "description": "use text after command to query giphy for gifs"
+            "description": "Returns either HEADS or TAILS"
         },
         'gif me': {
             'function': gif_me,
