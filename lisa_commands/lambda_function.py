@@ -26,6 +26,8 @@ def lambda_handler(data, _context):
     if "bot_id" in slack_event: # Prevent bot from responding to itself
         return request.return_status()
 
+    body = {}
+
     chat_action = 'chat.postMessage'
     if slack_event['type'] in ["message", "app_mention"]:
         # Get the ID of the channel where the message was posted.
