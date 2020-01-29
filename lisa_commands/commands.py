@@ -78,7 +78,7 @@ def commands():
         },
         'kill me': {
             'function': kill_me,
-            "description": ' responds with a gif with kill me as a search'
+            "description": 'removes person who invoked the command from current channel'
         },
         'manga me': {
             'function': manga_me,
