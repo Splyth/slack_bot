@@ -78,7 +78,7 @@ def commands():
         },
         'kill me': {
             'function': kill_me,
-            "description": ' responds with a gif with kill me as a search'
+            "description": 'removes person who invoked the command from current channel'
         },
         'manga me': {
             'function': manga_me,
@@ -311,6 +311,8 @@ def kill_me(_query, slack_event):
             "Heghlu’meH QaQ jajvam ~ Klingon Proverb",
             "batlhbIHeghjaj ~ Klingon Proverb"
         ])
+    elif response['error'] == 'cant_kick_from_general':
+        text = "The top brass told me I can't kick people from workspaces anymore. :pouting_cat:"
     else:
         text = f"I can't get that done. I get this error: `{response['error']}`"
 
