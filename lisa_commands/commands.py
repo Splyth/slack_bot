@@ -9,6 +9,7 @@ import json
 import logging
 import commands_helper
 import request_helper as request
+import MagicParser
 
 def message_text(slack_event):
     """
@@ -50,6 +51,10 @@ def commands():
         'call the cops': {
             'function': call_the_cops,
             "description": "responds with an image of anime cops with the caption You Called?"
+        },
+        'card me': {
+            'function': card_me,
+            "description": "responds with an image and text box of the given Magic: The Gathering card"
         },
         'decide': {
             'function': decide,
@@ -179,6 +184,16 @@ def call_the_cops(_query, slack_event):
     """
 
     return 'You called? ' + image_me('anime cops from bing', slack_event)
+
+def card_me(query, _slack_event):
+    """
+    query - query str
+    slack event - A dict of slack event information(unused for this function)
+
+    Returns the image url and text box of the Magic: the Gathering card given in the query.
+    """
+
+    return MagicParser.parse_magic_card(query)
 
 def decide(query, _slack_event):
     """
