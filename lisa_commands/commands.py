@@ -486,7 +486,7 @@ def shame(query, slack_event):
     else:
         user = query
         text = random.choice([
-            'Shame on you! ' + user + 'You should know better!',
+            'Shame on you! ' + user + ' You should know better!',
             user + ' ಠ_ಠ',
             user + ' You have made a mockery of yourself. Turn in your weeabo credentials!',
             user + ' :blobdisapproval:',
