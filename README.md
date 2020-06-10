@@ -7,6 +7,7 @@ A repo containing the code for a slack bot using an AWS lambda instance.
   Python 3.6 Runtime (Select once you have your lamabda function environment and API Gateway created)
   
   [DynamoDB](https://aws.amazon.com/dynamodb/) Tables: [bot_id: [id = 1, BOT_ID], karma_scores: [user, karma]]
+  
   [Google Account](https://console.developers.google.com)
   Google Custom Search API Enabled: Once your Google API Account is made enable "Custom Search API" for your project
   
