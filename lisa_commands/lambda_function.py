@@ -15,13 +15,19 @@ def lambda_handler(data, _context):
     data: slack request object
     _context: context object from awk
     """
+
     if not valid_slack_request(data):
         return request.return_status()
 
-    slack_event = json.loads(data['body'])['event']
+    raw_body = json.loads(data['body'])
 
-    if "challenge" in slack_event:
-        return slack_event["challenge"]
+    if 'challenge' in raw_body:
+        return {
+            'statusCode': 200,
+            'body':raw_body['challenge'],
+        }
+
+    slack_event = raw_body['event']    
 
     if "bot_id" in slack_event: # Prevent bot from responding to itself
         return request.return_status()
