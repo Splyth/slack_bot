@@ -113,7 +113,32 @@ def commands():
                 spotify me track Snow Halation
                 spotify me album The Life of Pablo
                 spotify me artist Streetlight Manifesto
+                spotify me playlist Today's Top Hits
             """
+        },
+        'song me': {
+          'function': song_me,
+            "description": """
+            Shortcut for 'spotify me track.'
+            """
+        },
+        'album me': {
+            'function': album_me,
+            "description": """
+        Shortcut for 'spotify me album.'
+        """
+        },
+        'artist me': {
+            'function': artist_me,
+            "description": """
+        Shortcut for 'spotify me artist.'
+        """
+        },
+        'playlist me': {
+            'function': playlist_me,
+            "description": """
+        Shortcut for 'spotify me playlist.'
+        """
         },
         'sticker me': {
             'function': sticker_me,
@@ -509,6 +534,38 @@ def spotify_me(query, _slack_event):
     Returns a link to spotify media item found by search
     """
     return request.spotify_search(query)
+
+def song_me(query, _slack_event):
+    """
+    :param query: query str
+    :param _slack_event: a dict of slack event information(unused for this function)
+    :return: a link to spotify song item found by search
+    """
+    return request.spotify_query('track', query)
+
+def album_me(query, _slack_event):
+    """
+    :param query: query str
+    :param _slack_event: a dict of slack event information(unused for this function)
+    :return: a link to spotify album item found by search
+    """
+    return request.spotify_query('album', query)
+
+def artist_me(query, _slack_event):
+    """
+    :param query: query str
+    :param _slack_event: a dict of slack event information(unused for this function)
+    :return: a link to spotify artist item found by search
+    """
+    return request.spotify_query('artist', query)
+
+def playlist_me(query, _slack_event):
+    """
+    :param query: query str
+    :param _slack_event: a dict of slack event information(unused for this function)
+    :return: a link to spotify playlist item found by search
+    """
+    return request.spotify_query('playlist', query)
 
 def sticker_me(query, _slack_event):
     """
