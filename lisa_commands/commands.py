@@ -528,8 +528,10 @@ def shame(query, slack_event):
 
 def spotify_me(query, _slack_event, query_type=None):
     """
-    query - query str
-    slack_event - A dict of slack event information(unused for this function)
+    :param query: query str
+    :param _slack_event: A dict of slack event information(unused for this function)
+    :param query_type: An optional string used for passing in the query type of the spotify search (song, album, artist,
+    playlist). If no query type is passed, the query type will be parsed used the first word of the query.
 
     Returns a link to spotify media item found by search
     """
