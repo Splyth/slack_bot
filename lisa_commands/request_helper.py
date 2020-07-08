@@ -212,25 +212,12 @@ def gify_search(media_type, query):
 
     return None
 
-def spotify_search(query):
-    """
-    wrapper method for spotify_query in order to maintain support for old 'spotify me' syntax
-    :query what type of content we are querying for and the search terms themselves
-    """
-    query_type, search_query = query.split(' ', 1)
-
-    return spotify_query(query_type, search_query)
-
-def spotify_query(query_type, search_query):
+def spotify_search(query_type, search_query):
     """
     submit a search query to spotify
     :param query_type: the type of query, of track, album, artist, or playlist.
     :param search_query:
     """
-    query_types = ['track', 'album', 'artist', 'playlist']
-    if query_type not in query_types:
-        return f'Invalid Media Type for search. Valid types are { " ".join(query_types) }'
-
     search_params = urllib.parse.urlencode({
         'q': search_query,
         'type': query_type,
