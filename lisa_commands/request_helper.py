@@ -212,18 +212,12 @@ def gify_search(media_type, query):
 
     return None
 
-def spotify_search(query):
+def spotify_search(query_type, search_query):
     """
-    submit a search to spotify
-    :query what type of content we are querying for and the search terms themselves
+    submit a search query to spotify
+    :param query_type: the type of query, of track, album, artist, or playlist.
+    :param search_query:
     """
-
-    query_types = ['track', 'album', 'artist', 'playlist']
-    query_type, search_query = query.split(' ', 1)
-
-    if query_type not in query_types:
-        return f'Invalid Media Type for search. Valid types are { " ".join(query_types) }'
-
     search_params = urllib.parse.urlencode({
         'q': search_query,
         'type': query_type,
@@ -247,8 +241,6 @@ def spotify_search(query):
         return search_response[f'{query_type}s']['items'][0]['external_urls']['spotify']
 
     return None
-
-
 
 def return_status():
     """

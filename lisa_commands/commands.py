@@ -113,7 +113,32 @@ def commands():
                 spotify me track Snow Halation
                 spotify me album The Life of Pablo
                 spotify me artist Streetlight Manifesto
+                spotify me playlist Today's Top Hits
             """
+        },
+        'song me': {
+          'function': song_me,
+            "description": """
+            Shortcut for 'spotify me track.'
+            """
+        },
+        'album me': {
+            'function': album_me,
+            "description": """
+        Shortcut for 'spotify me album.'
+        """
+        },
+        'artist me': {
+            'function': artist_me,
+            "description": """
+        Shortcut for 'spotify me artist.'
+        """
+        },
+        'playlist me': {
+            'function': playlist_me,
+            "description": """
+        Shortcut for 'spotify me playlist.'
+        """
         },
         'sticker me': {
             'function': sticker_me,
@@ -501,14 +526,56 @@ def shame(query, slack_event):
         {'user': {'S': query}}
     )['Item']['karma']['N']
 
-def spotify_me(query, _slack_event):
+def spotify_me(query, _slack_event, query_type=None):
     """
-    query - query str
-    slack_event - A dict of slack event information(unused for this function)
+    :param query: query str
+    :param _slack_event: A dict of slack event information(unused for this function)
+    :param query_type: An optional string used for passing in the query type of the spotify search (song, album, artist,
+    playlist). If no query type is passed, the query type will be parsed used the first word of the query.
 
     Returns a link to spotify media item found by search
     """
-    return request.spotify_search(query)
+    if query_type is None:
+        query_type, search_query = query.split(' ', 1)
+    else:
+        search_query = query
+
+    query_types = ['track', 'album', 'artist', 'playlist']
+    if query_type not in query_types:
+        return f'Invalid Media Type for search. Valid types are {" ".join(query_types)}'
+    return request.spotify_search(query_type, search_query)
+
+def song_me(query, _slack_event):
+    """
+    :param query: query str
+    :param _slack_event: a dict of slack event information(unused for this function)
+    :return: a link to spotify song item found by search
+    """
+    return spotify_me(query, _slack_event, 'track')
+
+def album_me(query, _slack_event):
+    """
+    :param query: query str
+    :param _slack_event: a dict of slack event information(unused for this function)
+    :return: a link to spotify album item found by search
+    """
+    return spotify_me(query, _slack_event, 'album')
+
+def artist_me(query, _slack_event):
+    """
+    :param query: query str
+    :param _slack_event: a dict of slack event information(unused for this function)
+    :return: a link to spotify artist item found by search
+    """
+    return spotify_me(query, _slack_event, 'artist')
+
+def playlist_me(query, _slack_event):
+    """
+    :param query: query str
+    :param _slack_event: a dict of slack event information(unused for this function)
+    :return: a link to spotify playlist item found by search
+    """
+    return spotify_me(query, _slack_event, 'playlist')
 
 def sticker_me(query, _slack_event):
     """
