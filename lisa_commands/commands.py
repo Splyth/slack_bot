@@ -100,6 +100,22 @@ def commands():
             'function': reverse_me,
             "description": "reverses text after command"
         },
+        'roll me': {
+            'function': roll_me,
+            "description": """
+            Roll the dice! Usage:
+            `roll me`: defaults to rolling 1d6
+            `roll me 3d6`: rolls three d6es
+            `roll me 4d20`: rolls four d20s :snoop:
+
+            Maximum die size: d1000
+            Maximum die count: 300
+            """
+        },
+        'roll': {
+            'function': roll_me,
+            "description": 'convenience alias for `roll me`'
+        },
         'shame': {
             'function': shame,
             "description": 'shame the text after command and removes karma'
@@ -142,7 +158,7 @@ def commands():
         },
         'sticker me': {
             'function': sticker_me,
-            "description": "uses text after command to query giphey for stickers"
+            "description": "uses text after command to query giphy for stickers"
         },
         'table flip': {
             'function': table_flip,
@@ -459,6 +475,50 @@ def reverse_me(query, _slack_event):
     """
     return query[::-1]
 
+def roll_me(query, _slack_event):
+    """
+    rolls the dice. maximum die size: d1000, maximum number of dice: 300
+    :param query: query string
+    :param _slack_event: a dict of slack event information (unused for this function)
+    :return: a string with the result
+    """
+    # lisa can have little a easter egg, as a treat.
+    # video is the smoke weed every day song
+    if query == "a joint" or query == "a blunt":
+        return ":mokeweed::snoop: https://www.youtube.com/watch?v=JcBIzuuIdOA :mokeweed::snoop:"
+
+    if query == "":
+        roll = [1, 6]
+    else:
+        roll = query.split('d', 1)
+    if len(roll) != 2:
+        return "Not a valid roll. Valid examples: `roll me 1d8` or `roll me 3d10`."
+    try:
+        dice = int(roll[0])
+        if dice > 300:
+            return "Woah now, slow your roll! That's _way_ too many dice. I can only roll up to 300 dice at a time."
+        sides = int(roll[1])
+        if sides > 1000:
+            return "Woah now, slow your roll! That die is _way_ too big. I can only roll dice with sides <= 1000."
+    except ValueError:
+        return "Not a valid roll. Valid examples: `roll me 1d8` or `roll me 3d10`."
+
+    rolls = []
+    for x in range(dice):
+        rolls.append(random.randint(1, sides))
+
+    result = "Rolling " + str(dice) + "d" + str(sides) + "."
+    if 1 < dice <= 20:
+        # for lower numbers of dice, the results of each roll are shown individually.
+        # skipped for larger amounts of dice so as to not clog the screen.
+        result += ' Results: '
+        result += str(rolls)
+        result += " = " + str(sum(rolls))
+    else:
+        result += " Result: " + str(sum(rolls))
+    return result
+
+
 def shame(query, slack_event):
     """
     query - query str
@@ -466,7 +526,6 @@ def shame(query, slack_event):
 
     Returns the query with some additional text shaming it.
     """
-
     query = query.strip().upper()
     requested_for = commands_helper.karma_requested_for(query, slack_event)
 
@@ -475,7 +534,7 @@ def shame(query, slack_event):
         return random.choice([
             user + " You shouldn't be so hard on yourself :ganbatte:",
             user + " :02pat: There there I'm sure it'll get better",
-            user + " :meowhug: It's not so bad I pronise things will get better.",
+            user + " :meowhug: It's not so bad I promise things will get better.",
             ("```\nWhat though life conspire to cheat you,\n"
              "Do not sorrow or complain.\n"
              "Lie still on the day of pain,\n\n"
