@@ -219,7 +219,7 @@ def call_the_cops(_query, slack_event):
     Returns an image link with the caption "You called?"
     """
 
-    return 'You called? ' + image_me('anime cops from bing', slack_event)
+    return 'You called? ' + image_me('anime police cops', slack_event)
 
 def decide(query, _slack_event):
     """
@@ -284,10 +284,7 @@ def help_command(_query, slack_event):
 
 def image_me(query, _slack_event):
     """
-    Gets an image link for Google or Bing. I am on free teirs so I can only send
-    ~100 requests to google and ~100 requests to Bing a day. To avoid hitting usage
-    caps I randomly pick one unless the user specifies "from google" or "from bing"
-    at the end of their query
+    Gets an image link from Google
 
     query - query str(unused for this function)
     slack_event - A dict of slack event information
@@ -295,21 +292,9 @@ def image_me(query, _slack_event):
     Returns an image link (with optional caption) or None
     """
 
-    search_engines = {'google':request.google_image_search, 'bing': request.bing_image_search}
-
-    # If user specified a search engine (e.g. from google) use that search engine
-    split = query.rsplit(' ', 2)
-    if len(split) > 1 and split[1].lower() == 'from':
-        search_engine = split[2].lower()
-        if search_engines.get(search_engine):
-            return search_engines[search_engine](query)
-
-    # Else random choice
-    search_engine = random.choice(list(search_engines.keys()))
-
-    img_link = search_engines[search_engine](query)
+    img_link = request.google_image_search(query)
     if img_link:
-        return f'From {search_engine.capitalize()}: {img_link}'
+        return img_link
     return None
 
 def kill_me(_query, slack_event):

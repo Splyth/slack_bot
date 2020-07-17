@@ -67,10 +67,6 @@ A repo containing the code for a slack bot using an AWS lambda instance.
   
 # Environment Variables
 
-  BING_SUBSCRIPTION_KEY: The Subscription Key from the Azure Account to use
-
-  BING_CUSTOM_SEARCH_KEY: The Custom Search Key to use (Create in Azure under Bing Custom image search)
-
   BOT_TOKEN is the slack apps token more info is [here:](https://api.slack.com/bot-users)
 
   GOOGLE_CUSTOM_SEARCH_KEY: Once you've enabled you Custom Search API check there it's the: Search Engine ID
