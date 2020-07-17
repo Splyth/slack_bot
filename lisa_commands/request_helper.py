@@ -20,11 +20,6 @@ SLACK_USER_TOKEN = os.environ["SLACK_USER_TOKEN"]
 GOOGLE_API_KEY = os.environ['GOOGLE_API_KEY']
 GOOGLE_CUSTOM_SEARCH_KEY = os.environ['GOOGLE_CUSTOM_SEARCH_KEY']
 
-# The Microsoft Azure subscription key
-BING_SUBSCRIPTION_KEY = os.environ['BING_SUBSCRIPTION_KEY']
-# The Custom Search API (uses bing) in Mircorsoft Azure to use
-BING_CUSTOM_SEARCH_KEY = os.environ['BING_CUSTOM_SEARCH_KEY']
-
 # Spotify API Client ID and Secret
 SPOTIFY_CLIENT_ID = os.environ['SPOTIFY_CLIENT_ID']
 SPOTIFY_CLIENT_SECRET = os.environ['SPOTIFY_CLIENT_SECRET']
@@ -111,31 +106,6 @@ def google_image_search(query):
     )
     if 'items' in data:
         return random.choice(data["items"])["pagemap"]["cse_image"][0]['src']
-
-    return None
-
-def bing_image_search(query):
-    """
-    Submit a search to bing for images
-    :query what to query for
-    """
-    params = urllib.parse.urlencode({
-        'q': query,
-        'count': 5,
-        'mkt': 'en-US',
-        'customconfig': BING_CUSTOM_SEARCH_KEY
-    })
-
-    request = urllib.request.Request(
-        'https://api.cognitive.microsoft.com/bingcustomsearch/v7.0/images/search?' + params
-    )
-
-    request.add_header("Ocp-Apim-Subscription-Key", BING_SUBSCRIPTION_KEY)
-
-    data = json.loads(urllib.request.urlopen(request).read())
-
-    if 'value' in data and data['value']:
-        return random.choice(data["value"])["contentUrl"]
 
     return None
 
