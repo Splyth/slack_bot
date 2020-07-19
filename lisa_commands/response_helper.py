@@ -3,7 +3,7 @@ A wrapper to apply additional fun options to the response we send to slack
 (e.g. post with different name or icon image.)
 """
 
-from datetime import datetime
+import datetime
 
 def apply_additional_message_options(body):
     """
@@ -13,13 +13,36 @@ def apply_additional_message_options(body):
     body - response body (dict)
     """
 
+    now = datetime.date.today()
+
+    # During the 15 Days leading up to Easter
+    days_till_easter = (calc_easter(now.year) - now).days
+    if days_till_easter >= 0 and days_till_easter < 15:
+        body['username'] ='Lucky Rabbit Lisa'
+        body["icon_url"] = 'https://raw.githubusercontent.com/Splyth/slack_bot/master/icons/Lisa_Easter.png'
     # During October for Halloween
-    if datetime.now().month == 10:
+    elif now.month == 10:
         body['username'] ='Witchy Lisa'
-        body["icon_url"] = 'https://raw.githubusercontent.com/Splyth/slack_bot/master/icons/Lisa_Halloween.png'
+        body["icon_url"] = 'https://raw.githubusercontent.com/Splyth/slack_bot/master/icons/Lisa_Easter.png'
     # During December for Christmas
-    elif datetime.now().month == 12:
+    elif now.month == 12:
         body['username'] ='Santa Lisa'
         body["icon_url"] = 'https://raw.githubusercontent.com/Splyth/slack_bot/master/icons/Lisa_Christmas.png'
-        
+
     return body
+
+def calc_easter(year):
+    """
+    Returns Easter as a date object. Because Easter is a floating mess
+    
+    year - the year to calc easter for
+    """
+    a = year % 19
+    b = year // 100
+    c = year % 100
+    d = (19 * a + b - b // 4 - ((b - (b + 8) // 25 + 1) // 3) + 15) % 30
+    e = (32 + 2 * (b % 4) + 2 * (c // 4) - d - (c % 4)) % 7
+    f = d + e - 7 * ((a + 11 * d + 22 * e) // 451) + 114
+    month = f // 31
+    day = f % 31 + 1    
+    return datetime.date(year, month, day)
