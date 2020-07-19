@@ -20,6 +20,14 @@ def apply_additional_message_options(body):
     if days_till_easter >= 0 and days_till_easter < 15:
         body['username'] ='Lucky Rabbit Lisa'
         body["icon_url"] = 'https://raw.githubusercontent.com/Splyth/slack_bot/master/icons/Lisa_Easter.png'
+    # During March 3rd for Lisa's Birthday
+    elif now.month == 3 and now.day == 3:
+        body['username'] = "It's My Birthday! I'm " + str(now.year - datetime.date(2019,3,3).year) + ' Years Old Today! Lisa'
+        body["icon_url"] = 'https://raw.githubusercontent.com/Splyth/slack_bot/master/icons/Lisa_Party_Hat.png'
+    # During Aug 8th for Animunity's Birthday
+    elif now.month == 8 and now.day == 8:
+        body['username'] = "Celebrating " + str(now.year - datetime.date(2018,8,8).year) + ' Years of Animunity! Lisa'
+        body["icon_url"] = 'https://raw.githubusercontent.com/Splyth/slack_bot/master/icons/Lisa_Party_Hat.png'
     # During October for Halloween
     elif now.month == 10:
         body['username'] ='Witchy Lisa'
