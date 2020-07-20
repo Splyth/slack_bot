@@ -8,6 +8,7 @@ import os
 import logging
 from commands import message_text
 import request_helper as request
+import response_helper as response_helper
 
 def lambda_handler(data, _context):
     """
@@ -54,6 +55,7 @@ def lambda_handler(data, _context):
             'ts': slack_event['item']['ts']
         }
 
+    body = response_helper.apply_additional_message_options(body)
     request.submit_slack_request(body, chat_action)
 
     return request.return_status()
