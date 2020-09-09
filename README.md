@@ -35,7 +35,7 @@ A repo containing the code for a slack bot using an AWS lambda instance.
 
   @BOT_NAME wiki me - use text after command to query wikipedia for an article
 
-  @BOT_NAME gif me - use text after command to query goggle for gifs
+  @BOT_NAME gif me - use text after command to query google for gifs
 
   @BOT_NAME spotify me [track|album|artist|playlist] - use text after command, including one of the media types in brackets, to query spotify for a song, album, artist, or playlist
 
