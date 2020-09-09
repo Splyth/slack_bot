@@ -156,10 +156,6 @@ def commands():
         Shortcut for 'spotify me playlist.'
         """
         },
-        'sticker me': {
-            'function': sticker_me,
-            "description": "uses text after command to query giphy for stickers"
-        },
         'table flip': {
             'function': table_flip,
             "description": "when you gotta flip a table"
@@ -248,7 +244,7 @@ def gif_me(query, _slack_event):
 
     Returns a link to a gif
     """
-    return request.gify_search('gifs', query)
+    return request.gif_search(query)
 
 def help_command(_query, slack_event):
     """
@@ -621,16 +617,6 @@ def playlist_me(query, _slack_event):
     """
     return spotify_me(query, _slack_event, 'playlist')
 
-def sticker_me(query, _slack_event):
-    """
-    query - query str
-    slack_event - A dict of slack event information(unused for this function)
-
-    Returns a link to a sticker
-    """
-
-    return request.gify_search('stickers', query)
-
 def table_flip(_query, _slack_event):
     """
     query - query str(unused for this function)
@@ -661,7 +647,6 @@ def youtube_me(query, _slack_event):
     """
     query - query str
     slack_event - A dict of slack event information(unused for this function)
-
     Returns a link to youtube video found by search
     """
 
@@ -692,3 +677,4 @@ def no_result_found_response():
         ("I've seen the vast expaneses of space, gazed into the abyss of a warp, "
          "and all of that pales in comparison to the emptiness of these search results"),
     ])
+ 

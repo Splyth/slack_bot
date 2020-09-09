@@ -1,5 +1,5 @@
 """
-A wrapper aaround external requests to APIs
+A wrapper around external requests to APIs
 """
 import json
 import os
@@ -90,22 +90,39 @@ def anime_news_network_search(media_type, query):
 
     return None
 
-def google_image_search(query):
+def gif_search(query):
+    """
+    submit a search to giphy
+    :query what to query for
+    """
+    link = google_image_search(query,{'imgType':'animated'})
+    
+    if link != None:
+        return link
+    return None
+
+def google_image_search(query, param_overrides={}):
     """
     Submit a search to google for images
     :query what to query for
+    :param_overrides a dict of search parameter overrides
     """
-    params = urllib.parse.urlencode({
+    
+    params = {
         'q': query,
         'key': GOOGLE_API_KEY,
         'cx': GOOGLE_CUSTOM_SEARCH_KEY,
-        'num': 5
-    })
+        'num': 5,
+        'searchType': 'image'
+    }
+    
+    params.update(param_overrides)
+
     data = json.loads(
-        urllib.request.urlopen("https://www.googleapis.com/customsearch/v1?" + params).read()
+        urllib.request.urlopen("https://www.googleapis.com/customsearch/v1?" + urllib.parse.urlencode(params)).read()
     )
     if 'items' in data:
-        return random.choice(data["items"])["pagemap"]["cse_image"][0]['src']
+        return random.choice(data['items'])['link']
 
     return None
 
@@ -136,6 +153,7 @@ def wikipedia_search(query):
     Submit a search to wikipedia
     :query what to query for
     """
+
     request_params = urllib.parse.urlencode({
         'action':'query',
         'list':'search',
@@ -147,38 +165,11 @@ def wikipedia_search(query):
 
     data = json.loads(urllib.request.urlopen(request).read())
 
-    logging.warning(data)
     if data['query']:
         if data['query']['search']:
             wikipedia_title = data['query']['search'][0]['title']
             link_title = '_'.join(wikipedia_title.split())
             return f"https://en.wikipedia.org/wiki/{link_title}"
-
-    return None
-
-def gify_search(media_type, query):
-    """
-    submit a search to giphy
-    :type [gifs|stickers]
-    :query what to query for
-    """
-
-    limit = 5
-    request_params = urllib.parse.urlencode({
-        'api_key': GIPHY_API_KEY,
-        'limit': limit,
-        'q': query,
-        'rating':'pg-13',
-        'lang': 'en'
-    })
-
-
-    url = f'https://api.giphy.com/v1/{media_type}/search?'
-    request = urllib.request.Request(url + request_params)
-    response = json.loads(urllib.request.urlopen(request).read())
-
-    if response['data']:
-        return random.choice(response['data'])['images']['original']['url']
 
     return None
 
