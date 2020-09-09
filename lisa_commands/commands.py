@@ -61,7 +61,7 @@ def commands():
         },
         'gif me': {
             'function': gif_me,
-            "description": "use text after command to query giphy for gifs"
+            "description": "use text after command to query google for gifs"
         },
         'help': {
             'function': help_command,
@@ -647,6 +647,7 @@ def youtube_me(query, _slack_event):
     """
     query - query str
     slack_event - A dict of slack event information(unused for this function)
+
     Returns a link to youtube video found by search
     """
 
@@ -677,4 +678,3 @@ def no_result_found_response():
         ("I've seen the vast expaneses of space, gazed into the abyss of a warp, "
          "and all of that pales in comparison to the emptiness of these search results"),
     ])
- 

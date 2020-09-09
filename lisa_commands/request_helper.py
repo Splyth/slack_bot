@@ -96,7 +96,7 @@ def gif_search(query):
     :query what to query for
     """
     link = google_image_search(query,{'imgType':'animated'})
-    
+
     if link != None:
         return link
     return None
@@ -107,7 +107,7 @@ def google_image_search(query, param_overrides={}):
     :query what to query for
     :param_overrides a dict of search parameter overrides
     """
-    
+
     params = {
         'q': query,
         'key': GOOGLE_API_KEY,
@@ -115,7 +115,7 @@ def google_image_search(query, param_overrides={}):
         'num': 5,
         'searchType': 'image'
     }
-    
+
     params.update(param_overrides)
 
     data = json.loads(
