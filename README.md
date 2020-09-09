@@ -13,8 +13,6 @@ A repo containing the code for a slack bot using an AWS lambda instance.
   
   [Azure Account](https://azure.microsoft.com/en-us/account/)
   Azure Custom Search API Enabled: Once your Microsoft Azure account is made enable "Custom Search API" for your project
-  
-  [Giphy Access](https://developers.giphy.com/)
 
   [Spotify Access](https://developer.spotify.com/documentation/web-api/quick-start/)
 
@@ -37,11 +35,9 @@ A repo containing the code for a slack bot using an AWS lambda instance.
 
   @BOT_NAME wiki me - use text after command to query wikipedia for an article
 
-  @BOT_NAME gif me - use text after command to query giphey for gif
+  @BOT_NAME gif me - use text after command to query goggle for gifs
 
   @BOT_NAME spotify me [track|album|artist|playlist] - use text after command, including one of the media types in brackets, to query spotify for a song, album, artist, or playlist
-
-  @BOT_NAME sticker me - use text after command to query giphey for sticker
 
   @BOT_NAME table flip - responds with a tableflip emoji
 
@@ -70,8 +66,6 @@ A repo containing the code for a slack bot using an AWS lambda instance.
   BOT_TOKEN is the slack apps token more info is [here:](https://api.slack.com/bot-users)
 
   GOOGLE_CUSTOM_SEARCH_KEY: Once you've enabled you Custom Search API check there it's the: Search Engine ID
-
-  GIPHY_API_KEY: A Giphey API KEY [here](https://developers.giphy.com/docs/api#quick-start-guide)
 
   GOOGLE API KEY: You can generate one in the Google API Under Credentials
 
