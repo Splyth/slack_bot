@@ -96,6 +96,16 @@ def commands():
             'function': put_it_back,
             "description": "when you are done flipping the table and it's time to clean up"
         },
+        'poll me': {
+            'function': poll_me,
+            "description": """
+            Starts a poll with the given options. First argument is the title of the poll, further arguments are the
+            poll options. Input should be formatted as comma-separated values. Max of 9 options.
+            Usage examples:
+            `@Lisa poll me Lunch?, Pizza, Burgers, Mexican`
+            `@Lisa poll me What's the better series?, Star Wars, Star Trek`
+            """
+        },
         'reverse me': {
             'function': reverse_me,
             "description": "reverses text after command"
@@ -378,7 +388,7 @@ def my_karma(_query, slack_event):
         'karma_scores',
         {'user': {'S': '<@' + slack_event['user'] + '>'}}
     )['Item']['karma']['N']
-    
+
 def praise(query, slack_event):
     """
     query - query str
@@ -386,7 +396,8 @@ def praise(query, slack_event):
 
     Returns the query with some additional text praising it.
     """
-
+    if len(query) == 0:
+        return ":praise_the_sun:"
     query = query.strip().upper()
     requested_for = commands_helper.karma_requested_for(query, slack_event)
 
@@ -437,6 +448,31 @@ def praise(query, slack_event):
         'karma_scores',
         {'user': {'S': query}}
     )['Item']['karma']['N']
+
+def poll_me(query, slack_event):
+    """
+    Makes a poll! Max of 9 options, comma separated.
+    :param query: query str
+    :param slack_event: A dict of slack event information
+    :return: A poll with the given options in the query string
+    """
+    if len(query) == 0:
+        return "You'll need to ask a question and provide at least two valid options to make a poll."
+    tokens = query.split(',')
+    number_emojis = [":one:", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:", ":eight:", ":nine:"]
+
+    if len(tokens) <= 2:
+        return "You'll need to ask a question and provide at least two valid options to make a poll."
+
+    if len(tokens) > 10:
+        return "That's too many options, you'll give everyone decision paralysis! Maximum of 9 poll options allowed."
+
+    response_text = "POLL: "
+    response_text += tokens.pop(0)
+    for i in range(0, len(tokens)):
+        response_text += "\n" + number_emojis[i] + ": " + tokens[i].strip()
+
+    return response_text
 
 def put_it_back(_query, _slack_event):
     """
@@ -492,7 +528,7 @@ def roll_me(query, _slack_event):
     if 1 < dice <= 20:
         # for lower numbers of dice, the results of each roll are shown individually.
         # skipped for larger amounts of dice so as to not clog the screen.
-        result += ' Results: '
+        result += " Results: "
         result += str(rolls)
         result += " = " + str(sum(rolls))
     else:
