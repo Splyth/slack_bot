@@ -457,14 +457,15 @@ def poll_me(query, slack_event):
     :return: A poll with the given options in the query string
     """
     if len(query) == 0:
-        return "You'll need to ask a question and provide at least two valid options to make a poll."
+        return "You want me to create a poll without giving me a question or options? Give me something to work with here!"
     tokens = query.split(',')
     number_emojis = [":one:", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:", ":eight:", ":nine:"]
 
-    if len(tokens) <= 2:
-        return "You'll need to ask a question and provide at least two valid options to make a poll."
-
-    if len(tokens) > 10:
+    if len(tokens) == 1:
+        return "Polls aren't open-ended questions, you'll need to provide at least two answer choices!"
+    elif len(tokens) == 2:
+        return "A poll with only one option? Sounds like you've already made up your mind..."
+    elif len(tokens) > 10:
         return "That's too many options, you'll give everyone decision paralysis! Maximum of 9 poll options allowed."
 
     response_text = "POLL: "
