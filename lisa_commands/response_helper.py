@@ -28,10 +28,22 @@ def apply_additional_message_options(body):
     elif now.month == 8 and now.day == 8:
         body['username'] = "Celebrating " + str(now.year - datetime.date(2018,8,8).year) + ' Years of Animunity! Lisa'
         body["icon_url"] = 'https://raw.githubusercontent.com/Splyth/slack_bot/master/icons/Lisa_Party_Hat.png'
+    # During Sept 19 for Talk Like a Pirate Day
+    elif now.month == 9 and now.day == 19:
+        body['username'] = "Captain 'Talk Like A Pirate Ya Scallywags!' Lisa"
+        body["icon_url"] = 'https://raw.githubusercontent.com/Splyth/slack_bot/master/icons/Lisa_Pirate.png'
     # During October for Halloween
     elif now.month == 10:
         body['username'] ='Witchy Lisa'
         body["icon_url"] = 'https://raw.githubusercontent.com/Splyth/slack_bot/master/icons/Lisa_Halloween.png'
+    # During the 5th of November
+    elif now.month == 11 and now.day == 5:
+        body['username'] ='Scheming Lisa'
+        body["icon_url"] = 'https://raw.githubusercontent.com/Splyth/slack_bot/master/icons/Lisa_Guy_Fawkes.png'
+    # During the last half of November for Thanksgiving
+    elif now.month == 11 and now.day >= 15:
+        body['username'] ='Thankful For All Of You! Lisa'
+        body["icon_url"] = 'https://raw.githubusercontent.com/Splyth/slack_bot/master/icons/Lisa_Thanksgiving.png'
     # During December for Christmas
     elif now.month == 12:
         body['username'] ='Santa Lisa'
