@@ -64,7 +64,7 @@ def direct_message_channel_search(slack_event):
     Returns the channel_id for the dm between the bot and the user who sent the message
     """
     return json.loads(
-        submit_slack_request({'user': slack_event['user']}, 'im.open')
+        submit_slack_request({'users': slack_event['user']}, 'conversations.open')
     )['channel']['id']
 
 def anime_news_network_search(media_type, query):
