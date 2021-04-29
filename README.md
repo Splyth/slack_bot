@@ -10,9 +10,6 @@ A repo containing the code for a slack bot using an AWS lambda instance.
   
   [Google Account](https://console.developers.google.com)
   Google Custom Search API Enabled: Once your Google API Account is made enable "Custom Search API" for your project
-  
-  [Azure Account](https://azure.microsoft.com/en-us/account/)
-  Azure Custom Search API Enabled: Once your Microsoft Azure account is made enable "Custom Search API" for your project
 
   [Spotify Access](https://developer.spotify.com/documentation/web-api/quick-start/)
 
