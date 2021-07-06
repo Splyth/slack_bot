@@ -9,13 +9,12 @@ import json
 import logging
 import commands_helper
 import request_helper as request
+import collections
 
 def message_text(slack_event):
     """
     Gets text to send back to slack
-
     slack_event - a dictionary containing slack event information
-
     Returns the message text we will send to Slack
     """
 
@@ -25,9 +24,7 @@ def message_text(slack_event):
 def parse_mention(text):
     """
     Finds direct mentions (mentions at the front of a message)
-
     text - a dictionary containing slack event information
-
     Returns an 2 element tuple of [USER_ID, rest_of_message]
     """
 
@@ -38,7 +35,6 @@ def parse_mention(text):
 def commands():
     """
     Gets the known command list
-
     Returns a dictionary of known commands
     """
 
@@ -84,6 +80,14 @@ def commands():
             'function': manga_me,
             "description": "use text after command to query anime news network for manga info"
         },
+        'most praised':{
+            'function': most_praised,
+            'description': 'list the highest karma earners'
+        },
+        'most shamed': {
+            'function': most_shamed,
+            'description': 'list lowest karma earners'
+        },
         'my karma': {
             'function': my_karma,
             "description": "Shows user their karma"
@@ -117,7 +121,6 @@ def commands():
             `roll me`: defaults to rolling 1d6
             `roll me 3d6`: rolls three d6es
             `roll me 4d20`: rolls four d20s :snoop:
-
             Maximum die size: d1000
             Maximum die count: 300
             """
@@ -186,11 +189,9 @@ def run_command(command, query, slack_event):
     If it's unable to run the command it will chop off the last word add it
     to the query argument and try again until it either finds a command to run
     or the command argument is empty.
-
     command - a string containing the command to search for
     query - the query to send to the command
     slack_event - a dictionary containing slack event information
-
     Returns the message text to send back to slack
     """
 
@@ -211,7 +212,6 @@ def anime_me(query, _slack_event):
     """
     query - query str
     slack_event - A dict of slack event information(unused for this function)
-
     Returns a link to info on an anime series
     """
 
@@ -221,7 +221,6 @@ def call_the_cops(_query, slack_event):
     """
     query - query str (unused for this function)
     slack_event - A dict of slack event information
-
     Returns an image link with the caption "You called?"
     """
 
@@ -231,7 +230,6 @@ def decide(query, _slack_event):
     """
     query - query str
     slack_event - A dict of slack event information(unused for this function)
-
     Returns the message: "I'm going to go with" followed by a random word from the query
     """
 
@@ -241,7 +239,6 @@ def flip_coin(_query, _slack_event):
     """
     query - query str (unused for this function)
     slack_event - A dict of slack event information(unused for this function)
-
     Returns HEADS or TAILS sourrounded by coin emojis
     """
 
@@ -251,7 +248,6 @@ def gif_me(query, _slack_event):
     """
     query - query str
     slack_event - A dict of slack event information(unused for this function)
-
     Returns a link to a gif
     """
     return request.gif_search(query)
@@ -259,16 +255,16 @@ def gif_me(query, _slack_event):
 def help_command(_query, slack_event):
     """
     Sends a private message to user containing information on commands known
-
     query - query str(unused for this function)
     slack_event - A dict of slack event information
-
     Returns empty string
     """
 
+
     # get users direct message channel id
     dm_request = json.loads(request.submit_slack_request({'user': slack_event['user']}, 'im.open'))
-    dm_id = dm_request['channel']['id']
+    dm_id = request.direct_message_channel_search(slack_event)
+
 
     text = "Known Commands:\n"
     for command, info, in commands().items():
@@ -291,10 +287,8 @@ def help_command(_query, slack_event):
 def image_me(query, _slack_event):
     """
     Gets an image link from Google
-
     query - query str(unused for this function)
     slack_event - A dict of slack event information
-
     Returns an image link (with optional caption) or None
     """
 
@@ -307,7 +301,6 @@ def kill_me(_query, slack_event):
     """
     query - query str (unused for this function)
     slack_event - A dict of slack event information
-
     Returns nothing
     """
 
@@ -316,7 +309,7 @@ def kill_me(_query, slack_event):
         'channel': slack_event["channel"],
         'user': slack_event['user'],
     }
-    response = json.loads(request.submit_slack_request(data, 'channels.kick', 'USER'))
+    response = json.loads(request.submit_slack_request(data, 'conversations.kick', 'USER'))
 
     # DM User with fun line
     if response['ok']:
@@ -365,16 +358,48 @@ def manga_me(query, _slack_event):
     """
     query - query str
     slack_event - A dict of slack event information(unused for this function)
-
     Returns a link to manga series info
     """
     return request.anime_news_network_search('manga', query)
+
+def most_praised(_query, _slack_event):
+    table = collections.defaultdict(list)
+    for record in request.dynamodb_scan('karma_scores')['Items']:
+        table[int(record['karma']['N'])].append(record['user']['S'])
+
+    sorted_records = collections.OrderedDict(sorted(table.items(), reverse=True))
+    
+    text = ['THE PRAISED :praise_the_sun: \n']
+    for karma, users in sorted_records.items():
+        for user in users:
+            if len(text) == 11:
+                break
+            
+            text.append("{}. {}   Karma: {} \n".format(len(text), user, karma))
+    
+    return ">".join(text)
+
+def most_shamed(_query, _slack_event):
+    table = collections.defaultdict(list)
+    for record in request.dynamodb_scan('karma_scores')['Items']:
+        table[int(record['karma']['N'])].append(record['user']['S'])
+
+    sorted_records = collections.OrderedDict(sorted(table.items()))
+    
+    text = ['THE SHAMED :shame_bell: \n']
+    for karma, users in sorted_records.items():
+        for user in users:
+            if len(text) == 11:
+                break
+            
+            text.append("{}. {}   Karma: {} \n".format(len(text), user, karma))
+    
+    return ">".join(text)
 
 def my_karma(_query, slack_event):
     """
     _query - query str (unused for this function)
     slack_event - A dict of slack event information(unused for this function)
-
     Returns the users karma:
     """
     text = random.choice([
@@ -393,7 +418,6 @@ def praise(query, slack_event):
     """
     query - query str
     slack_event - A dict of slack event information
-
     Returns the query with some additional text praising it.
     """
     if len(query) == 0:
@@ -479,7 +503,6 @@ def put_it_back(_query, _slack_event):
     """
     query - query str
     slack_event - A dict of slack event information(unused for this function)
-
     Returns a randomly selected reverse_table_flip ascii art
     """
     return random.choice(["┬─┬ノ( º _ ºノ)", r"┬──┬ ¯\_(ツ)"])
@@ -488,7 +511,6 @@ def reverse_me(query, _slack_event):
     """
     query - query str
     slack_event - A dict of slack event information(unused for this function)
-
     Returns the query string in reverse order
     """
     return query[::-1]
@@ -541,7 +563,6 @@ def shame(query, slack_event):
     """
     query - query str
     slack_event - A dict of slack event information
-
     Returns the query with some additional text shaming it.
     """
     query = query.strip().upper()
@@ -609,7 +630,6 @@ def spotify_me(query, _slack_event, query_type=None):
     :param _slack_event: A dict of slack event information(unused for this function)
     :param query_type: An optional string used for passing in the query type of the spotify search (song, album, artist,
     playlist). If no query type is passed, the query type will be parsed used the first word of the query.
-
     Returns a link to spotify media item found by search
     """
     if query_type is None:
@@ -658,7 +678,6 @@ def table_flip(_query, _slack_event):
     """
     query - query str(unused for this function)
     slack_event - A dict of slack event information(unused for this function)
-
     Returns the a random table_flip ascii art
     """
 
@@ -670,12 +689,11 @@ def table_flip(_query, _slack_event):
         " (ノ≥∇))ノ┻━┻ ",
         "(╯°□°）╯︵ ┻━┻ "
     ])
-
+    
 def wiki_me(query, _slack_event):
     """
     query - query str
     slack_event - A dict of slack event information(unused for this function)
-
     Returns a link to wiki page found by search
     """
     return request.wikipedia_search(query)
@@ -684,7 +702,6 @@ def youtube_me(query, _slack_event):
     """
     query - query str
     slack_event - A dict of slack event information(unused for this function)
-
     Returns a link to youtube video found by search
     """
 
