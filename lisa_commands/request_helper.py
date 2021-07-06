@@ -260,6 +260,27 @@ def dynamodb_query(table, keys):
     dynamodb = boto3.client('dynamodb')
     return dynamodb.get_item(TableName=table, Key=keys)
 
+def dynamodb_scan(table):
+    """
+    Returns the whole honking table
+
+    table - The table name (string)
+
+    Example:
+        dynamodb_scan(
+            'my_table',
+            
+        )
+        #=> {'Item': {...}}
+
+    Returns a dict
+    """
+
+    dynamodb = boto3.client('dynamodb')
+    return dynamodb.scan(
+        TableName = table, 
+        Select = 'ALL_ATTRIBUTES')
+
 ## HELPER FUNCTIONS
 def spotify_token():
     """
