@@ -4,7 +4,7 @@ A repo containing the code for a slack bot using an AWS lambda instance.
 # Requirements
   [AWS Account](https://aws.amazon.com/console/)
   
-  Python 3.6 Runtime (Select once you have your lamabda function environment and API Gateway created)
+  Python 3.6 Runtime (Select once you have your lambda function environment and API Gateway created)
   
   [DynamoDB](https://aws.amazon.com/dynamodb/) Tables: [bot_id: [id = 1, BOT_ID], karma_scores: [user, karma]]
   
@@ -51,6 +51,8 @@ A repo containing the code for a slack bot using an AWS lambda instance.
   @BOT_USER shame <User ID> - You must @USER_NAME (might figure out how to display with a user name search)
 
   @BOT_USER praise <User ID> - You must @USER_NAME (might figure out how to display with a user name search)
+
+  @BOT_USER emojify me - Finds the first emoji in the command, then writes out the rest of the command using the given emoji and :nothing:
 
 # Other Bot Interactions:
   ## Delete Bot Message:

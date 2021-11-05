@@ -10,6 +10,7 @@ import logging
 import commands_helper
 import request_helper as request
 import collections
+import emojify_constants
 
 def message_text(slack_event):
     """
@@ -180,6 +181,10 @@ def commands():
         'youtube me': {
             'function': youtube_me,
             "description": "use text after command to query youtube"
+        },
+        'emojify me': {
+            'function': emojify_me,
+            "description": "Write words made of emoji! First emoji found in the command is used, subsequent emojis are treated as text."
         }
     }
 
@@ -706,6 +711,29 @@ def youtube_me(query, _slack_event):
     """
 
     return request.youtube_search(query)
+
+def emojify_me(query, _slack_event):
+    """
+    query - query str
+    slack_event - A dict of slack event information(unused for this function)
+    Returns the query text rendered in the form of a drawing made of emojis.
+    """
+    query = query.strip().upper()  # TODO: remove .upper() when lowercase support is added to emojify_constants
+    emoji = ""
+    char_patterns = []
+    for token in query.split():
+        # Use the first emoji found in the message as the template, and don't emojify it.
+        if token[0] == ":" and token[-1] == ":" and not emoji:
+            emoji = token
+        else:
+            for char in token:
+                pattern = emojify_constants.patterns.get(char)
+                # skip characters that don't have a char pattern in emojify_constants
+                if pattern:
+                    char_patterns.append(pattern)
+    if not emoji:
+        return "You'll need to tell me what emoji you want me to use before I can emojify something."
+    return commands_helper.emojify(char_patterns, emoji)
 
 def no_result_found_response():
     """
