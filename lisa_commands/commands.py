@@ -726,6 +726,9 @@ def emojify_me(query, _slack_event):
         if token[0] == ":" and token[-1] == ":" and not emoji:
             emoji = token
         else:
+            # if it's past the first word in the command, add a space before the word
+            if char_patterns:
+                char_patterns.append(emojify_constants.patterns.get(' '))
             for char in token:
                 pattern = emojify_constants.patterns.get(char)
                 # skip characters that don't have a char pattern in emojify_constants
@@ -733,6 +736,8 @@ def emojify_me(query, _slack_event):
                     char_patterns.append(pattern)
     if not emoji:
         return "You'll need to tell me what emoji you want me to use before I can emojify something."
+    if not char_patterns:
+        return "There's no text in that message that I'm able to emojify."
     return commands_helper.emojify(char_patterns, emoji)
 
 def no_result_found_response():
