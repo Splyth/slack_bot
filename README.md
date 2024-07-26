@@ -54,6 +54,8 @@ A repo containing the code for a slack bot using an AWS lambda instance.
 
   @BOT_USER emojify me - Finds the first emoji in the command, then writes out the rest of the command using the given emoji and :nothing:
 
+  @BOT_USER magic me - Retrieves information on the requested Magic: the Gathering card from the Scryfall API. Also aliased to 'card me'
+
 # Other Bot Interactions:
   ## Delete Bot Message:
     If a bot has posted something you didn't want it to. You can respond with an emoji to have the
