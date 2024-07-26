@@ -11,6 +11,7 @@ import commands_helper
 import request_helper as request
 import collections
 import emojify_constants
+import magic_parser
 
 def message_text(slack_event):
     """
@@ -185,6 +186,14 @@ def commands():
         'emojify me': {
             'function': emojify_me,
             "description": "Write words made of emoji! First emoji found in the command is used, subsequent emojis are treated as text."
+        },
+        'magic me': {
+            'function': magic_me,
+            "description": "Get data on a Magic: the Gathering card from Scryfall."
+        },
+        'card me': {
+            'function': magic_me,
+            "description": "Alias for 'magic me'"
         }
     }
 
@@ -739,6 +748,14 @@ def emojify_me(query, _slack_event):
     if not char_patterns:
         return "There's no text in that message that I'm able to emojify."
     return commands_helper.emojify(char_patterns, emoji)
+
+def magic_me(query, _slack_event):
+    """
+    query - query str
+    slack_event - A dict of slack event information(unused for this function)
+    Returns information on the requested Magic: the Gathering card using the Scryfall API.
+    """
+    return magic_parser.parse_magic_card(query)
 
 def no_result_found_response():
     """
