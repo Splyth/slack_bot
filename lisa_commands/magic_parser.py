@@ -11,7 +11,7 @@ def parse_magic_card(card_name):
         return parse_slack_response(card)
     except urllib.error.HTTPError as e:
         print(str(e))
-        if "404" in e:
+        if "404" in str(e):
             return "Sorry, card not found! Check your spelling, or be more specific, if there could be many cards that contain your search term."
         else:
             return "Oops. Something went wrong. Let Robert know what you were querying and he'll look into it."
